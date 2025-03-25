@@ -57,7 +57,7 @@ $upsDev = 'HomeOffice@quantum';
 // df command function, formatted into a table
 function output_df() {
 	$df_cmd = trim(`which df`);
-	$exclude_list = '^udev|^tmpfs|\/snap';
+	$exclude_list = '^udev|tmpfs|\/sys|\/snap';
 
 	if (file_exists("$df_cmd")) {
 		$output = `$df_cmd -h`;
