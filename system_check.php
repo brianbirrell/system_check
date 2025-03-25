@@ -24,7 +24,7 @@
 // You can use game servers or anything.
 // e.g. "IRCdaemon"=>"localhost:6667",
 $services = array (
-	'ssh' => 'grayspace.redirectme.net:22',
+	'ssh' => 'quantum:22',
 	'smtp' => 'grayspace.redirectme.net:25',
 	'smtp-tls' => 'grayspace.redirectme.net:587',
 	'http' => 'grayspace.redirectme.net:80',
