@@ -24,22 +24,18 @@
 // You can use game servers or anything.
 // e.g. "IRCdaemon"=>"localhost:6667",
 $services = array (
-//	'ftp' => 'grayspace.redirectme.net:21',
 	'ssh' => 'grayspace.redirectme.net:22',
-//	'telnet'=>'grayspace.redirectme.net:23',
 	'smtp' => 'grayspace.redirectme.net:25',
-        'smtp-tls' => 'grayspace.redirectme.net:587',
+	'smtp-tls' => 'grayspace.redirectme.net:587',
 	'http' => 'grayspace.redirectme.net:80',
 	'https' => 'grayspace.redirectme.net:443',
-//	'pop3' => 'grayspace.redirectme.net:110',
-//	'pop3s' => 'grayspace.redirectme.net:995',
 	'imap' => 'grayspace.redirectme.net:143',
 	'imaps' => 'grayspace.redirectme.net:993',
-	'smb' => 'quantum.grayspace.redirectme.net:445',
+	'smb' => 'quantum:445',
 	'spamd' => 'localhost:783',
 	'mysql' => 'localhost:3306',
 	'clamd' => 'localhost:3310',
-	'upsd' => 'quantum.grayspace.redirectme.net:3493',
+	'upsd' => 'quantum:3493',
 	'clamsmtp' => 'localhost:10025',
 //	'saned' => 'localhost:6566',
 	'hddtemp' => 'localhost:7634',
@@ -48,17 +44,15 @@ $services = array (
 	'webmin' => 'grayspace.redirectme.net:1551',
 	'usermin' => 'grayspace.redirectme.net:5115',
 	'redis' => 'localhost:6379',
-        'portainer' => 'localhost:9000',
-	'transmissiond' => 'quantum.grayspace.redirectme.net:9091',
+	'portainer' => 'localhost:9443',
+	'transmissiond' => 'quantum:9091',
 //	'deluged' => 'localhost:1900',
-        'memcached' => 'localhost:11211',
-        'minecraft' => 'grayspace.redirectme.net:25565',
-	'plex' => 'grayspace.redirectme.net:        'plex' => 'grayspace.redirectme.net:32400',
-',
-//	'plex' => 'grayspace.redirectme.net:32400',
+	'memcached' => 'localhost:11211',
+	'minecraft' => 'grayspace.redirectme.net:25565',
+	'plex' => 'grayspace.redirectme.net:43500',
 );
 
-$upsDev = 'HomeOffice@quantum.grayspace.redirectme.net';
+$upsDev = 'HomeOffice@quantum';
 
 // df command function, formatted into a table
 function output_df() {
@@ -216,8 +210,7 @@ function output_service_footer() {
 }
 
 function output_disk_health() {
-	//$smartApp     = 'sudo ' . trim( `which smartctl` );
-	$smartApp = 'sudo /usr/sbin/smartctl';
+	$smartApp     = 'sudo ' . trim( `which smartctl` );
 	$smartAppOpts = '-d sat';
 	$host = 'localhost';
 	$port = '7634';
@@ -227,19 +220,19 @@ function output_disk_health() {
 	$hdList = '';
 	$i = 0;
 
-	$myFile = '/proc/partitions';
+	$blkApp = trim(`which lsblk`);
+	$blkOpts = "-l -d -o NAME,TYPE";
 
-	if (file_exists("$myFile")) {
-		$fh = fopen($myFile, 'r');
-		$theData = fread($fh, 2048);
-		fclose($fh);
+	if (file_exists("$blkApp")) {
+		$theData = `$blkApp $blkOpts`;
 
-		preg_match_all('/(hd[a-z]|sd[a-z])[^\d]/', $theData, $matches);
+		preg_match_all('/(hd[a-z]|sd[a-z]|nvme\dn\d)/', $theData, $matches);
 
 		$handle = @ fsockopen($host, $port, $errno, $errstr, 15);
 		if (!$handle) {
 			echo "ERROR: unable to connect to $host:$port";
-		} else {
+		}
+		else {
 			while (!feof($handle)) {
 				$buffer = fgets($handle, 4096);
 			}
@@ -289,7 +282,8 @@ function output_disk_health() {
 			echo '</td></tr>';
 		}
 		echo '</table>';
-	} else {
+	}
+	else {
 		echo "$myFile not found!\n";
 	}
 }
@@ -310,7 +304,8 @@ function output_raid() {
 			echo '</td></tr>';
 		}
 		echo '</table>';
-	} else {
+	}
+	else {
 		echo "$myFile not found!\n";
 	}
 }
@@ -334,7 +329,8 @@ function output_ups($upsDev) {
 		}
 		elseif ($status == 'LB') {
 			$statusText = "Low Battery (backup power low)";
-		} else {
+		}
+		else {
 			$statusText = $status;
 		}
 
