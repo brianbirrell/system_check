@@ -60,7 +60,7 @@ $upsDev = 'HomeOffice@quantum.grayspace.redirectme.net';
 // df command function, formatted into a table
 function output_df() {
 	$df_cmd = trim(`which df`);
-	$include_list = '^\/';
+	$exclude_list = '^udev|^tmpfs|\/snap';
 
 	if (file_exists("$df_cmd")) {
 		$output = `$df_cmd -h`;
@@ -75,7 +75,7 @@ function output_df() {
 				}
 				echo '</tr>';
 			} else {
-				if (preg_match("/$include_list/i", $lines[$i])) {
+				if (!preg_match("/$exclude_list/i", $lines[$i])) {
 					echo '<tr class="body">';
 					for ($j = 0; $j < 6; $j++) {
 						if ($j == 0 || $j == 5)
@@ -94,7 +94,7 @@ function output_df() {
 		}
 		echo '</table>';
 		if ($matched > 0) {
-			echo "<p>* Lines that matched \"$include_list\" have been included</p>";
+			echo "<p>* Lines matching \"$exclude_list\" excluded</p>";
 		}
 	} else {
 		echo "$df_cmd not found!\n";
@@ -353,8 +353,7 @@ function output_ups($upsDev) {
 
 function output_sensors() {
 	$sensors_cmd = trim(`which sensors`);
-	// $exclude_list = 'fan[4-5]|in[3-7]|temp[3]';
-	$exclude_list = 'System Fan 1|Power Fan|intrusion0';
+	$exclude_list = 'SYS_FAN[2-4]|PUMP_FAN[1]|Intrusion';
 	$matched = 0;
 
 	if (file_exists("$sensors_cmd")) {
@@ -380,7 +379,7 @@ function output_sensors() {
 		}
 		echo '</table>';
 		if ($matched > 0) {
-			echo "<p>* Lines that matched \"$exclude_list\" have been excluded</p>";
+			echo "<p>* Lines matching \"$exclude_list\" excluded</p>";
 		}
 	} else {
 		echo "$sensors_cmd not found!\n";
