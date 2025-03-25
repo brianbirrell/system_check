@@ -24,7 +24,7 @@
 // You can use game servers or anything.
 // e.g. "IRCdaemon"=>"localhost:6667",
 $services = array (
-	'ftp' => 'grayspace.redirectme.net:21',
+//	'ftp' => 'grayspace.redirectme.net:21',
 	'ssh' => 'grayspace.redirectme.net:22',
 //	'telnet'=>'grayspace.redirectme.net:23',
 	'smtp' => 'grayspace.redirectme.net:25',
@@ -43,16 +43,19 @@ $services = array (
 	'clamsmtp' => 'localhost:10025',
 //	'saned' => 'localhost:6566',
 	'hddtemp' => 'localhost:7634',
-	'privoxy' => 'quantum.grayspace.redirectme.net:8118',
-	'tor' => 'quantum.grayspace.redirectme.net:9050',
+//	'privoxy' => 'quantum.grayspace.redirectme.net:8118',
+//	'tor' => 'quantum.grayspace.redirectme.net:9050',
 	'webmin' => 'grayspace.redirectme.net:1551',
 	'usermin' => 'grayspace.redirectme.net:5115',
 	'redis' => 'localhost:6379',
         'portainer' => 'localhost:9000',
-//	'transmissiond' => 'grayspace.redirectme.net:9091',
+	'transmissiond' => 'quantum.grayspace.redirectme.net:9091',
 //	'deluged' => 'localhost:1900',
         'memcached' => 'localhost:11211',
-	'plex' => 'grayspace.redirectme.net:32400',
+        'minecraft' => 'grayspace.redirectme.net:25565',
+	'plex' => 'grayspace.redirectme.net:        'plex' => 'grayspace.redirectme.net:32400',
+',
+//	'plex' => 'grayspace.redirectme.net:32400',
 );
 
 $upsDev = 'HomeOffice@quantum.grayspace.redirectme.net';
