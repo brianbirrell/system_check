@@ -1,0 +1,63 @@
+/* General body styling for dark theme */
+body {
+    font-family: Verdana, sans-serif;
+    color: #f0f0f0; /* Light text color */
+    background-color: #121212; /* Dark background color */
+    font-size: 60%;
+  }
+  
+  /* Table styling */
+  table.main {
+    border: 1px solid #444;
+    align: center;
+    cellpadding: 2;
+    cellspacing: 0;
+    background-color: #1e1e1e; /* Darker table background */
+  }
+  
+  table.section {
+    border: 0;
+    align: left;
+    cellpadding: 1;
+    cellspacing: 1;
+    background-color: #1e1e1e;
+  }
+  
+  table.section tr.header {
+    font-family: Verdana, sans-serif;
+    color: #ffffff; /* White text for headers */
+    font-size: 80%;
+    background-color: #333333; /* Dark gray header background */
+  }
+  
+  table.section tr.body {
+    font-family: Verdana, sans-serif;
+    color: #f0f0f0; /* Light text for body rows */
+    font-size: 60%;
+    background-color: #1e1e1e; /* Darker row background */
+  }
+  
+  h1 {
+    font-family: Verdana, sans-serif;
+    color: #ffffff; /* White text for headings */
+    font-size: 100%;
+  }
+  
+  h2 {
+    font-family: Verdana, sans-serif;
+    color: #ffffff;
+  }
+  
+  p {
+    font-family: Verdana, sans-serif;
+    color: #f0f0f0;
+    font-size: 60%;
+  }
+  
+  /* Floating div styling */
+  div.float-left {
+    float: left;
+    padding: 5px;
+    background-color: #1e1e1e; /* Dark background for floating divs */
+    border: 1px solid #444; /* Border for better visibility */
+  }
