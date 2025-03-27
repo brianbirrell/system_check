@@ -20,6 +20,16 @@ $upsDev = $config['upsDev'];
 		const stylesheet = document.getElementById('theme-stylesheet');
 		stylesheet.setAttribute('href', savedTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
 		stylesheet.setAttribute('data-theme', savedTheme);
+
+		// Automatically refresh data on page load
+		refreshData();
+	});
+
+	// Refresh the page when switching back to this tab
+	document.addEventListener('visibilitychange', () => {
+		if (document.visibilityState === 'visible') {
+			refreshData();
+		}
 	});
 
 	// Toggle theme and save preference
@@ -31,6 +41,11 @@ $upsDev = $config['upsDev'];
 		stylesheet.setAttribute('href', newTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
 		stylesheet.setAttribute('data-theme', newTheme);
 		localStorage.setItem('theme', newTheme);
+	}
+
+	// Function to refresh data
+	function refreshData() {
+		location.reload();
 	}
   </script>
 <body>
@@ -395,6 +410,7 @@ function output_sensors() {
 <?php output_raid(); ?>
 </td></tr><tr><td>
 	<button onclick="toggleTheme()">Toggle Theme</button>
+	<button onclick="refreshData()">Refresh Data</button>
 </td></tr>
 </table>
 
