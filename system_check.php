@@ -12,17 +12,7 @@ $upsDev = $config['upsDev'];
 <head>
   <meta content="text/html; charset=utf-8" http-equiv="content-type">
   <title>System Check</title>
-  <style type="text/css">
-    table.main    {border:1; align:center; cellpadding:2; cellspacing:0;}
-    table.section {border:0; align:left; cellpadding:1; cellspacing:1;}
-    table.section tr.header {font-family:Verdana; color:black; font-size:80%; background-color:#C0C0C0;}
-    table.section tr.body   {font-family:Verdana; color:black; font-size:60%;}
-    h1 {font-family:Verdana; color:black; font-size:100%;}
-    h2 {font-family:Verdana; color:black;}
-    p  {font-family:Verdana; color:black; font-size:60%;}
-    body {font-family:Verdana; color:black; font-size:60%;}
-    div.float-left {float: left; padding: 5px;}
-  </style>
+  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
 
