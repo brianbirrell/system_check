@@ -14,19 +14,24 @@ $upsDev = $config['upsDev'];
   <title>System Check</title>
   <link id="theme-stylesheet" rel="stylesheet" type="text/css" href="styles.css" data-theme="light">
   <script>
-    // JavaScript to toggle between light and dark themes
-    function toggleTheme() {
-      const stylesheet = document.getElementById('theme-stylesheet');
-      const currentTheme = stylesheet.getAttribute('data-theme');
-      
-      if (currentTheme === 'light') {
-        stylesheet.setAttribute('href', 'styles-dark.css');
-        stylesheet.setAttribute('data-theme', 'dark');
-      } else {
-        stylesheet.setAttribute('href', 'styles.css');
-        stylesheet.setAttribute('data-theme', 'light');
-      }
-    }
+	// Load the saved theme on page load
+	document.addEventListener('DOMContentLoaded', () => {
+		const savedTheme = localStorage.getItem('theme') || 'light';
+		const stylesheet = document.getElementById('theme-stylesheet');
+		stylesheet.setAttribute('href', savedTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
+		stylesheet.setAttribute('data-theme', savedTheme);
+	});
+
+	// Toggle theme and save preference
+	function toggleTheme() {
+		const stylesheet = document.getElementById('theme-stylesheet');
+		const currentTheme = stylesheet.getAttribute('data-theme');
+		const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+		
+		stylesheet.setAttribute('href', newTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
+		stylesheet.setAttribute('data-theme', newTheme);
+		localStorage.setItem('theme', newTheme);
+	}
   </script>
 <body>
 
