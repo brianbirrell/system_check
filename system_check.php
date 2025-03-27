@@ -20,9 +20,6 @@ $upsDev = $config['upsDev'];
 		const stylesheet = document.getElementById('theme-stylesheet');
 		stylesheet.setAttribute('href', savedTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
 		stylesheet.setAttribute('data-theme', savedTheme);
-
-		// Automatically refresh data on page load
-		refreshData();
 	});
 
 	// Refresh the page when switching back to this tab
