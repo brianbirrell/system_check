@@ -23,3 +23,4 @@ A PHP-based system monitoring tool that provides information about disk usage, m
    ```bash
    git clone https://github.com/your-username/system_check.git
    cd system_check
+   cp ./config-example.php config.php
