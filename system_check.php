@@ -381,13 +381,19 @@ function output_sensors() {
 ?>
 
 <table border=1 align=center cellpadding=2 cellspacing=0>
-<tr><td>
-	<h2>System Check</h2>
-	<div style="text-align: right;">
-		<button onclick="toggleTheme()">Toggle Theme</button>
-		<button onclick="refreshData()">Refresh Data</button>
+<thead>
+<tr><td style="vertical-align: top;">
+	<div style="display: flex; align-items: center; justify-content: space-between;">
+		<h1>System Check</h1>
+		<div>
+			<button onclick="toggleTheme()">Toggle Theme</button>
+			<button onclick="refreshData()">Refresh Data</button>
+		</div>
 	</div>
-</td></tr><tr><td>
+</td></tr>
+</thead>
+<tbody>
+<tr><td>
 <h2>System:</h2>
 <?php output_name(); ?>
 </td></tr><tr><td>
@@ -412,6 +418,7 @@ function output_sensors() {
 <h2>RAID Info:</h2>
 <?php output_raid(); ?>
 </td></tr>
+</tbody>
 </table>
 
 </body>
