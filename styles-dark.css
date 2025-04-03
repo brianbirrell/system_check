@@ -40,12 +40,13 @@ body {
   h1 {
     font-family: Verdana, sans-serif;
     color: #ffffff; /* White text for headings */
-    font-size: 100%;
+    font-size: 150%;
   }
   
   h2 {
     font-family: Verdana, sans-serif;
     color: #ffffff;
+    font-size: 100%;
   }
   
   p {

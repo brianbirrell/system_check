@@ -381,34 +381,44 @@ function output_sensors() {
 ?>
 
 <table border=1 align=center cellpadding=2 cellspacing=0>
+<thead>
+<tr><td style="vertical-align: top;">
+	<div style="display: flex; align-items: center; justify-content: space-between;">
+		<h1>System Check</h1>
+		<div>
+			<button onclick="toggleTheme()">Toggle Theme</button>
+			<button onclick="refreshData()">Refresh Data</button>
+		</div>
+	</div>
+</td></tr>
+</thead>
+<tbody>
 <tr><td>
-<h1>System:</h1>
+<h2>System:</h2>
 <?php output_name(); ?>
 </td></tr><tr><td>
-<h1>Memory:</h1>
+<h2>Memory:</h2>
 <?php output_mem(); ?>
 </td></tr><tr><td>
-<h1>Services:</h1>
+<h2>Services:</h2>
 <?php output_service($services); ?>
 </td></tr><tr><td>
-<h1>Sensors:</h1>
+<h2>Sensors:</h2>
 <?php output_sensors(); ?>
 </td></tr><tr><td>
-<h1>UPS Status:</h1>
+<h2>UPS Status:</h2>
 <?php output_ups($upsDev); ?>
 </td></tr><tr><td>
-<h1>Filesystem Info:</h1>
+<h2>Filesystem Info:</h2>
 <?php output_df(); ?>
 </td></tr><tr><td>
-<h1>Disk Health:</h1>
+<h2>Disk Health:</h2>
 <?php output_disk_health(); ?>
 </td></tr><tr><td>
-<h1>RAID Info:</h1>
+<h2>RAID Info:</h2>
 <?php output_raid(); ?>
-</td></tr><tr><td>
-	<button onclick="toggleTheme()">Toggle Theme</button>
-	<button onclick="refreshData()">Refresh Data</button>
 </td></tr>
+</tbody>
 </table>
 
 </body>
