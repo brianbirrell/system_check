@@ -383,8 +383,10 @@ function output_sensors() {
 <table border=1 align=center cellpadding=2 cellspacing=0>
 <tr><td>
 	<h2>System Check</h2>
-	<button onclick="toggleTheme()">Toggle Theme</button>
-	<button onclick="refreshData()">Refresh Data</button>
+	<div style="text-align: right;">
+		<button onclick="toggleTheme()">Toggle Theme</button>
+		<button onclick="refreshData()">Refresh Data</button>
+	</div>
 </td></tr><tr><td>
 <h2>System:</h2>
 <?php output_name(); ?>
