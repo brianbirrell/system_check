@@ -28,12 +28,13 @@ table.main {
   h1 {
     font-family: Verdana;
     color: black;
-    font-size: 100%;
+    font-size: 150%;
   }
   
   h2 {
     font-family: Verdana;
     color: black;
+    font-size: 100%;
   }
   
   p {
