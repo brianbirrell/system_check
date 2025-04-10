@@ -120,6 +120,7 @@ function output_mem() {
 
 function output_name() {
 	$date = date('l, M d, Y - h:i:s A');
+	$timezone = date_default_timezone_get();
 	$uname_cmd = trim(`which uname`);
 	$hostname_cmd = trim(`which hostname`);
 	$uptime_cmd = trim(`which uptime`);
@@ -134,7 +135,7 @@ function output_name() {
 		echo '<b>Name:</b>&nbsp;';
 		echo "$name<br>";
 		echo '<b>Time:</b>&nbsp;';
-		echo "$date<br>";
+		echo "$date $timezone<br>";
 		echo '<b>Version:</b>&nbsp;';
 		echo "$version<br>";
 		echo '<b>Uptime:</b>&nbsp;';
