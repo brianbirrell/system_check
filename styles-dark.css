@@ -62,3 +62,31 @@ body {
     background-color: #1e1e1e; /* Dark background for floating divs */
     border: 1px solid #444; /* Border for better visibility */
   }
+  
+  .refresh-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .refresh-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .theme-toggle-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .theme-toggle-button:hover {
+    background-color: #0056b3;
+  }
