@@ -390,7 +390,7 @@ function output_sensors() {
 		<h1>System Check</h1>
 		<div>
 			<button onclick="toggleTheme()" class="theme-toggle-button">Toggle Theme</button>
-			<button onclick="refreshData" class="refresh-button">&#x21bb; Refresh</button>
+			<button onclick="refreshData()" class="refresh-button">&#x21bb; Refresh</button>
 		</div>
 	</div>
 </td></tr>
