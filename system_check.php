@@ -45,6 +45,7 @@ $upsDev = $config['upsDev'];
 		location.reload();
 	}
   </script>
+</head>
 <body>
 
 <?php
@@ -52,6 +53,7 @@ $upsDev = $config['upsDev'];
 function output_df() {
 	$df_cmd = trim(`which df`);
 	$exclude_list = '^udev|tmpfs|\/sys|\/snap';
+	$matched = 0;
 
 	if (file_exists("$df_cmd")) {
 		$output = `$df_cmd -h`;
@@ -112,7 +114,7 @@ function output_mem() {
 		}
 		echo '</table>';
 	} else {
-		echo "$free not found!\n";
+		echo "$free_cmd not found!\n";
 	}
 }
 
@@ -208,9 +210,9 @@ function output_disk_health() {
 	$smartAppOpts = '-d sat';
 	$host = 'localhost';
 	$port = '7634';
-	$hdTempLines;
-	$hdTempRec;
-	$hdTempHash;
+	$hdTempLines = 0;
+	$hdTempRec = 0;
+	$hdTempHash = [];
 	$hdList = '';
 	$i = 0;
 
@@ -278,7 +280,7 @@ function output_disk_health() {
 		echo '</table>';
 	}
 	else {
-		echo "$myFile not found!\n";
+		echo "$blkApp not found!\n";
 	}
 }
 
