@@ -388,8 +388,9 @@ function output_sensors() {
 <tr><td style="vertical-align: top;">
 	<div style="display: flex; align-items: center; justify-content: space-between;">
 		<h1>System Check</h1>
-		<div>
+		<div class="btn-container">
 			<button onclick="toggleTheme()" class="theme-toggle-button">Toggle Theme</button>
+			&nbsp;
 			<button onclick="refreshData()" class="refresh-button">&#x21bb; Refresh</button>
 		</div>
 	</div>

@@ -71,6 +71,7 @@ body {
     color: white;
     cursor: pointer;
     font-size: 14px;
+    height: 30px;
   }
   
   .refresh-button:hover {
@@ -85,8 +86,14 @@ body {
     color: white;
     cursor: pointer;
     font-size: 14px;
+    height: 30px;
   }
   
   .theme-toggle-button:hover {
     background-color: #0056b3;
+  }
+
+  .btn-container {
+    display: flex;
+    vertical-align: middle;
   }
