@@ -391,7 +391,7 @@ function output_sensors() {
 		<div class="btn-container">
 			<button onclick="toggleTheme()" class="theme-toggle-button">Toggle Theme</button>
 			&nbsp;
-			<button onclick="refreshData()" class="refresh-button">&#x21bb; Refresh</button>
+			<button onclick="refreshData()" class="refresh-button" title="Refresh Data">&#x21bb;</button>
 		</div>
 	</div>
 </td></tr>
