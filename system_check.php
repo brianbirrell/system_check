@@ -5,6 +5,8 @@ $config = require 'config.php';
 // Extract configuration values
 $services = $config['services'];
 $upsDev = $config['upsDev'];
+$dev_exclude_list = $config['dev_exclude_list'];
+$sensor_exclude_list = $config['sensor_exclude_list'];
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -50,9 +52,8 @@ $upsDev = $config['upsDev'];
 
 <?php
 // df command function, formatted into a table
-function output_df() {
+function output_df($dev_exclude_list) {
 	$df_cmd = trim(`which df`);
-	$exclude_list = '^udev|tmpfs|\/sys|\/snap';
 	$matched = 0;
 
 	if (file_exists("$df_cmd")) {
@@ -68,7 +69,7 @@ function output_df() {
 				}
 				echo '</tr>';
 			} else {
-				if (!preg_match("/$exclude_list/i", $lines[$i])) {
+				if (!preg_match("/$dev_exclude_list/i", $lines[$i])) {
 					echo '<tr class="body">';
 					for ($j = 0; $j < 6; $j++) {
 						if ($j == 0 || $j == 5)
@@ -87,7 +88,7 @@ function output_df() {
 		}
 		echo '</table>';
 		if ($matched > 0) {
-			echo "<p>* Lines matching \"$exclude_list\" excluded</p>";
+			echo "<p>* Lines matching \"$dev_exclude_list\" excluded</p>";
 		}
 	} else {
 		echo "$df_cmd not found!\n";
@@ -324,38 +325,40 @@ function output_ups($upsDev) {
 	}
 }
 
-function output_sensors() {
+function output_sensors($sensor_exclude_list) {
 	$sensors_cmd = trim(`which sensors`);
-	$exclude_list = 'SYS_FAN[2-4]|PUMP_FAN[1]|Intrusion';
 	$matched = 0;
 
-	if (file_exists("$sensors_cmd")) {
-		$output = `sudo $sensors_cmd`;
-		$lines = preg_split("/\n/", $output);
+	if (!empty($sensors_cmd) && file_exists("$sensors_cmd")) {
+		$retval = null;
+		$output = [];
+		$output = shell_exec("$sensors_cmd 2>&1");
 
-		echo '<table class="section">';
-		echo '<tr class="header">';
-		echo '<td>&nbsp;Sensor&nbsp;</td>';
-		echo '<td>&nbsp;Information&nbsp;</td>';
-		echo '</tr>';
+		if ($output === null) {
+			echo "<p>Error: Unable to retrieve sensor data. Please contact the administrator.</p>";
+			return;
+		}
+		else {
+			$lines = preg_split("/\n/", $output);
 
-		foreach ($lines as $line) {
-			if (!preg_match("/$exclude_list/i", $line)) {
-				list ($sensor, $data) = preg_split('/:/', $line);
-				echo '<tr class="body">';
-				echo "<td>$sensor</td>";
-				echo "<td>$data</td>";
-				echo '</tr>';
-			} else {
-				$matched++;
+			foreach ($lines as $line) {
+				if (strpos($line, ':') !== false) {
+					list ($sensor, $data) = preg_split('/:/', $line);
+					echo '<tr class="body">';
+					echo "<td>$sensor</td>";
+					echo "<td>$data</td>";
+					echo '</tr>';
+				} elseif (!preg_match("/$sensor_exclude_list/i", $line)) {
+					$matched++;
+				}
 			}
-		}
-		echo '</table>';
-		if ($matched > 0) {
-			echo "<p>* Lines matching \"$exclude_list\" excluded</p>";
-		}
+			echo '</table>';
+			if ($matched > 0) {
+				echo "<p>* Lines matching \"$sensor_exclude_list\" excluded</p>";
+			}
+		}	
 	} else {
-		echo "$sensors_cmd not found!\n";
+		echo "<p>Error: Unable to execute '$sensors_cmd'. Please check permissions or configuration.</p>";
 	}
 }
 ?>
@@ -382,16 +385,16 @@ function output_sensors() {
 <?php output_mem(); ?>
 </td></tr><tr><td>
 <h2>Services:</h2>
-<?php output_service($services); ?>
+<?php output_service(services: $services); ?>
 </td></tr><tr><td>
 <h2>Sensors:</h2>
-<?php output_sensors(); ?>
+<?php output_sensors($sensor_exclude_list); ?>
 </td></tr><tr><td>
 <h2>UPS Status:</h2>
 <?php output_ups($upsDev); ?>
 </td></tr><tr><td>
 <h2>Filesystem Info:</h2>
-<?php output_df(); ?>
+<?php output_df($dev_exclude_list); ?>
 </td></tr><tr><td>
 <h2>Disk Health:</h2>
 <?php output_disk_health(); ?>

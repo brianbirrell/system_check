@@ -33,5 +33,15 @@ return [
 
     // This is the name of the UPS device you want to monitor.
     'upsDev' => 'HomeOffice@quantum',
+
+ 	// Example format: 'SYS_FAN[2-4]|PUMP_FAN[1]|Intrusion' excludes sensors named SYS_FAN2, SYS_FAN3, SYS_FAN4, PUMP_FAN1, and Intrusion.
+	// Additional examples:
+	// 'CPU_TEMP|GPU_TEMP' excludes sensors named CPU_TEMP and GPU_TEMP.
+	// 'FAN[0-9]|TEMP_SENSOR' excludes sensors named FAN0, FAN1, FAN2, etc., and TEMP_SENSOR.
+	// Edge case: '.*_FAN' matches any sensor name ending with '_FAN'.
+	'sensor_exclude_list' => 'SYS_FAN[2-4]|PUMP_FAN[1]|Intrusion',
+
+    // Regular expression pattern to exclude temporary or system files from the filesystem entries.
+	'dev_exclude_list' => '^udev|tmpfs|\/sys|\/snap',
 ];
 ?>
