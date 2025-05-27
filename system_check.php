@@ -254,8 +254,8 @@ function output_disk_health() {
 
 		echo '<tr class="body">';
 		echo "<td>$drive</td>";
-		echo "<td>$temp</td>";
-		echo "<td>$health</td>";
+		echo "<td align=\"center\">$temp</td>";
+		echo "<td align=\"center\">$health</td>";
 		echo '</tr>';
 	}
 
