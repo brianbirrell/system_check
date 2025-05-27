@@ -207,82 +207,59 @@ function output_service_footer() {
 }
 
 function output_disk_health() {
-	$smartApp     = 'sudo ' . trim( `which smartctl` );
-	$smartAppOpts = '-d sat';
-	$host = 'localhost';
-	$port = '7634';
-	$hdTempLines = 0;
-	$hdTempRec = 0;
-	$hdTempHash = [];
-	$hdList = '';
-	$i = 0;
+	$smartApp = 'sudo ' . trim(`which smartctl`);
+	$lsblkApp = trim(`which lsblk`);
+	$lsblkOpts = "-dpn -I 8,259 -o NAME";
 
-	$blkApp = trim(`which lsblk`);
-	$blkOpts = "-l -d -o NAME,TYPE";
+	if (!file_exists($lsblkApp)) {
+		echo "$lsblkApp not found!\n";
+		return;
+	}
 
-	if (file_exists("$blkApp")) {
-		$theData = `$blkApp $blkOpts`;
+	$lsblkOutput = `$lsblkApp $lsblkOpts`;
+	$drives = array_filter(array_map('trim', explode("\n", $lsblkOutput)));
 
-		preg_match_all('/(hd[a-z]|sd[a-z]|nvme\dn\d)/', $theData, $matches);
+	echo '<table class="section">';
+	echo '<tr class="header">';
+	echo '<td>&nbsp;Drive&nbsp;</td>';
+	echo '<td>&nbsp;Temperature&nbsp;</td>';
+	echo '<td>&nbsp;SMART Status&nbsp;</td>';
+	echo '</tr>';
 
-		$handle = @ fsockopen($host, $port, $errno, $errstr, 15);
-		if (!$handle) {
-			echo "ERROR: unable to connect to $host:$port";
-		}
-		else {
-			while (!feof($handle)) {
-				$buffer = fgets($handle, 4096);
+	foreach ($drives as $drive) {
+		$smartOutput = [];
+		$retval = 1;
+		exec("$smartApp -H -A $drive 2>&1", $smartOutput, $retval);
+
+		// Default values
+		$health = 'N/A';
+		$temp = 'N/A';
+
+		// Parse SMART health
+		foreach ($smartOutput as $line) {
+			if (preg_match('/SMART overall-health self-assessment test result:\s*(\w+)/i', $line, $m)) {
+				$health = strtoupper($m[1]);
 			}
-			fclose($handle);
-
-			$buffer = preg_replace('/^\|/', '', $buffer);
-			$buffer = preg_replace('/\|$/', '', $buffer);
-
-			$hdTempLines = preg_split('/\|\|/', $buffer);
-
-			foreach ($hdTempLines as $line) {
-				$hdTempRec = preg_split('/\|/', $line);
-				$hdTempHash["$hdTempRec[0]"] = $hdTempRec[2] . ' &deg;' . $hdTempRec[3];
+			// Try to find temperature (ATA or NVMe)
+			if (preg_match('/Temperature_Celsius.*\s(\d+)\s\(.*\)$/', $line, $m)) {
+				$temp = $m[1] . ' &deg;C';
+			}
+			if (preg_match('/Temperature:\s*(\d+)\s*C/', $line, $m)) {
+				$temp = $m[1] . ' &deg;C';
+			}
+			if (preg_match('/Current Temperature:\s*(\d+)\s*C/', $line, $m)) {
+				$temp = $m[1] . ' &deg;C';
 			}
 		}
 
-		echo '<table class="section">';
-		echo '<tr class="header">';
-		echo '<td>&nbsp;Drive&nbsp;</td>';
-		echo '<td>&nbsp;Temperature&nbsp;</td>';
-		echo '<td>&nbsp;SMART Status&nbsp;</td>';
+		echo '<tr class="body">';
+		echo "<td>$drive</td>";
+		echo "<td>$temp</td>";
+		echo "<td>$health</td>";
 		echo '</tr>';
-
-		// Get the Temp and SMART info for each drive.
-		foreach ($matches[1] as $hdName) {
-			$value = '';
-			echo '<tr class="body">';
-			echo "<td>/dev/$hdName&nbsp;&nbsp;&nbsp;&nbsp;";
-			echo '</td><td>';
-
-			if (array_key_exists("/dev/$hdName", $hdTempHash)) {
-				echo $hdTempHash["/dev/$hdName"];
-			} else {
-				echo 'N/A';
-			}
-			echo '</td>';
-
-			// /etc/sudoers need a line like this to get S.M.A.R.T info
-			// ALL ALL=(ALL) NOPASSWD:/usr/sbin/smartctl
-			exec("$smartApp $smartAppOpts /dev/$hdName", $value, $retval);
-			echo "<td>";
-			if (!$retval) {
-				echo "PASSED";
-			} else {
-				echo "FAILED! ($retval)";
-			}
-			echo '</td></tr>';
-		}
-		echo '</table>';
 	}
-	else {
-		echo "$blkApp not found!\n";
-	}
+
+	echo '</table>';
 }
 
 function output_raid() {
