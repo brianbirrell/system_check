@@ -15,7 +15,10 @@ A PHP-based system monitoring tool that provides information about disk usage, m
 - PHP 7.4 or higher
 - A web server (e.g., Apache, Nginx)
 - `df`, `free`, `uname`, `hostname`, and `uptime` commands available on the system
-- `smartctl` for disk health monitoring (optional)
+- `smartctl` for disk health monitoring
+   - To allow smartctl to work the /etc/sudoers file needs to be updated with the following line
+     ```bash
+     ALL ALL=(ALL) NOPASSWD:/usr/sbin/smartctl
 
 ## Installation
 
