@@ -241,7 +241,7 @@ function output_disk_health() {
 				$health = strtoupper($m[1]);
 			}
 			// Try to find temperature (ATA or NVMe)
-			if (preg_match('/Temperature_Celsius.*?(\d+)\s*$/', $line, $m)) {
+			if (preg_match('/Temperature_Celsius.*\s(\d+)\s\(.*\)$/', $line, $m)) {
 				$temp = $m[1] . ' &deg;C';
 			}
 			if (preg_match('/Temperature:\s*(\d+)\s*C/', $line, $m)) {
