@@ -21,6 +21,7 @@ $dev_exclude_list = $config['dev_exclude_list'];
 $sensor_exclude_list = $config['sensor_exclude_list'];
 ?>
 
+<?php
 /**
  * System Check Page
  *
@@ -42,6 +43,7 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
  *
  * @file system_check.php
  */
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -518,6 +520,7 @@ function output_sensors($sensor_exclude_list) {
 }
 ?>
 
+<?php
 /**
  * Renders a system check dashboard as an HTML table.
  *
@@ -539,6 +542,7 @@ function output_sensors($sensor_exclude_list) {
  * @param string $upsDev             UPS device identifier.
  * @param array $dev_exclude_list    List of filesystems to exclude from display.
  */
+?>
 <table border=1 align=center cellpadding=2 cellspacing=0>
 <thead>
 <tr><td style="vertical-align: top;">
