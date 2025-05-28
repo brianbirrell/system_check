@@ -9,18 +9,14 @@ body {
 /* Table styling */
 table.main {
   border: 1px solid #444;
-  align: center;
-  cellpadding: 2;
-  cellspacing: 0;
   background-color: #1e1e1e; /* Darker table background */
 }
 
 table.section {
   border: 0;
-  align: left;
-  cellpadding: 1;
-  cellspacing: 1;
   background-color: #1e1e1e;
+  width: 90%;
+  min-width: 150px; /* Minimum width for the table */
 }
 
 table.section tr.header {
@@ -51,14 +47,19 @@ table.sensors tr.header {
   background-color: #333333; /* Dark gray header background */
 }
 
+table.sensors tr.body {
+  font-family: Verdana;
+  color: #f0f0f0; /* Light text for body rows */
+  font-size: 60%;
+  background-color: #1e1e1e; /* Darker row background */
+}
+
 table.sensors td:nth-child(1) {
   width: 40%; /* Key column width */
-  font-size: 60%;
 }
 
 table.sensors td:nth-child(2) {
   width: 60%; /* Value column width */
-  font-size: 60%;
 }
 
 h1 {
