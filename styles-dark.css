@@ -1,6 +1,6 @@
 /* General body styling for dark theme */
 body {
-  font-family: Verdana, sans-serif;
+  font-family: Verdana;
   color: #f0f0f0; /* Light text color */
   background-color: #121212; /* Dark background color */
   font-size: 60%;
@@ -24,17 +24,41 @@ table.section {
 }
 
 table.section tr.header {
-  font-family: Verdana, sans-serif;
+  font-family: Verdana;
   color: #ffffff; /* White text for headers */
   font-size: 80%;
   background-color: #333333; /* Dark gray header background */
 }
 
 table.section tr.body {
-  font-family: Verdana, sans-serif;
+  font-family: Verdana;
   color: #f0f0f0; /* Light text for body rows */
   font-size: 60%;
   background-color: #1e1e1e; /* Darker row background */
+}
+
+/* Specific table for sensors */
+table.sensors {
+  width: 80%;
+  min-width: 150px; /* Minimum width for the table */
+  background-color: #1e1e1e; /* Darker table background */
+}
+
+table.sensors tr.header {
+  font-family: Verdana;
+  color: #ffffff; /* White text for headers */
+  font-size: 80%;
+  background-color: #333333; /* Dark gray header background */
+}
+
+table.sensors td:nth-child(1) {
+  width: 40%; /* Key column width */
+  font-size: 60%;
+}
+
+table.sensors td:nth-child(2) {
+  width: 60%; /* Value column width */
+  font-size: 60%;
 }
 
 h1 {

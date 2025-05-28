@@ -25,6 +25,29 @@ table.section tr.body {
   font-size: 60%;
 }
 
+/* Specific table for sensors */
+table.sensors {
+  width: 80%;
+  min-width: 150px; /* Minimum width for the table */
+}
+
+table.sensors tr.header {
+  font-family: Verdana;
+  color: black;
+  font-size: 80%;
+  background-color: #C0C0C0;
+}
+
+table.sensors td:nth-child(1) {
+  width: 40%; /* Key column width */
+  font-size: 60%;
+}
+
+table.sensors td:nth-child(2) {
+  width: 60%; /* Value column width */
+  font-size: 60%;
+}
+
 h1 {
   font-family: Verdana;
   color: black;
