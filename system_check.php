@@ -91,7 +91,7 @@ function output_df($dev_exclude_list) {
 			echo "<p>* Lines matching \"$dev_exclude_list\" excluded</p>";
 		}
 	} else {
-		echo "<p>Error: Unable to execute '$df_cmd'. Please check permissions or configuration.</p>";
+		echo "<p>Error: Unable to execute 'df'. Please check permissions or configuration.</p>";
 	}
 }
 
@@ -115,7 +115,7 @@ function output_mem() {
 		}
 		echo '</table>';
 	} else {
-		echo "<p>Error: Unable to execute '$free_cmd'. Please check permissions or configuration.</p>";
+		echo "<p>Error: Unable to execute 'free'. Please check permissions or configuration.</p>";
 	}
 }
 
@@ -144,7 +144,7 @@ function output_name() {
 		echo '</p></td></tr>';
 		echo '</table>';
 	} else {
-		echo "<p>Error: Unable to execute '$uname_cmd', '$hostname_cmd', or '$uptime_cmd'. Please check permissions or configuration.</p>";	}
+		echo "<p>Error: Unable to execute 'uname', 'hostname', or 'uptime'. Please check permissions or configuration.</p>";	}
 }
 
 function output_service($services) {
@@ -320,7 +320,7 @@ function output_ups($upsDev) {
 		echo "&nbsp;&nbsp;&nbsp;Status=$statusText, Charge=$charge, Runtime=$runtime, Load=$load";
 		echo '</p>';
 	} else {
-		echo "<p>Error: Unable to execute $upsApp. Please check permissions or configuration.</p>";
+		echo "<p>Error: Unable to execute 'upsc'. Please check permissions or configuration.</p>";
 	}
 }
 
@@ -362,7 +362,7 @@ function output_sensors($sensor_exclude_list) {
 			}
 		}	
 	} else {
-		echo "<p>Error: Unable to execute '$sensors_cmd'. Please check permissions or configuration.</p>";
+		echo "<p>Error: Unable to execute 'sensors'. Please check permissions or configuration.</p>";
 	}
 }
 ?>
