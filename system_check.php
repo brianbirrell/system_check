@@ -438,12 +438,14 @@ function output_raid() {
 	$theData = stream_get_contents($fh);
 	fclose($fh);
 
-	$lines = preg_split("/\n/", $theData);
+	$lines = explode("\n", $theData);
 	echo '<table class="section">';
-	for ($i = 0; $i < sizeof($lines) && strlen($lines[$i]) > 1; $i++) {
-		echo '<tr class="body"><td>';
-		echo htmlspecialchars($lines[$i]);
-		echo '</td></tr>';
+	foreach ($lines as $line) {
+		if (strlen($line) > 1) {
+			echo '<tr class="body"><td>';
+			echo htmlspecialchars($line);
+			echo '</td></tr>';
+		}
 	}
 	echo '</table>';
 }
