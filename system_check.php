@@ -1,5 +1,10 @@
 <?php
-// Include the configuration file
+/**
+ * Loads the configuration settings from the 'config.php' file.
+ *
+ * @var array $config Associative array containing configuration options.
+ * @throws Exception If the 'config.php' file is missing or returns invalid data.
+ */
 $config = require 'config.php';
 
 // Extract configuration values
@@ -9,6 +14,27 @@ $dev_exclude_list = $config['dev_exclude_list'];
 $sensor_exclude_list = $config['sensor_exclude_list'];
 ?>
 
+/**
+ * System Check Page
+ *
+ * This file renders the main HTML structure for the System Check application.
+ * 
+ * Features:
+ * - Loads and applies the user's preferred theme (light or dark) from localStorage.
+ * - Provides a toggleTheme() function to switch between light and dark themes, updating both the stylesheet and localStorage.
+ * - Automatically refreshes the page data when the browser tab becomes visible again.
+ * - Includes a refreshData() function to reload the page.
+ *
+ * JavaScript:
+ * - On DOMContentLoaded, applies the saved theme.
+ * - Listens for visibility changes to refresh data when the tab is reactivated.
+ * - Handles theme toggling and persistence.
+ *
+ * Stylesheets:
+ * - Uses 'styles.css' for light theme and 'styles-dark.css' for dark theme.
+ *
+ * @file system_check.php
+ */
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -51,7 +77,18 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
 <body>
 
 <?php
-// df command function, formatted into a table
+/**
+ * Outputs the disk free space information in an HTML table format, excluding devices that match a given pattern.
+ *
+ * This function executes the 'df -h' command to retrieve disk usage statistics,
+ * parses the output, and displays it as an HTML table. Devices whose lines match
+ * the provided exclusion regular expression pattern will be omitted from the output.
+ * If any lines are excluded, a note is displayed below the table.
+ *
+ * @param string $dev_exclude_list A regular expression pattern to match device lines that should be excluded from the output.
+ *
+ * @return void
+ */
 function output_df($dev_exclude_list) {
 	$df_cmd = trim(`which df`);
 	$matched = 0;
@@ -95,7 +132,16 @@ function output_df($dev_exclude_list) {
 	}
 }
 
-// free comand function, formatted into a table
+/**
+ * Outputs the system's memory usage in a formatted HTML table.
+ *
+ * This function attempts to locate and execute the 'free' command to retrieve
+ * memory statistics. The output is parsed and displayed as an HTML table with
+ * appropriate headers and data rows. If the 'free' command is not found or
+ * cannot be executed, an error message is displayed instead.
+ *
+ * @return void
+ */
 function output_mem() {
 	$free_cmd = trim(`which free`);
 
@@ -119,6 +165,17 @@ function output_mem() {
 	}
 }
 
+/**
+ * Outputs a table displaying system information including hostname, current date and time,
+ * system version, and uptime.
+ *
+ * This function retrieves the paths to the 'uname', 'hostname', and 'uptime' commands,
+ * verifies their existence, and executes them to gather system details. The information
+ * is then formatted and displayed in an HTML table. If any of the required commands are
+ * not found, an error message is displayed instead.
+ *
+ * @return void
+ */
 function output_name() {
 	$date = date('l, M d, Y - h:i:s A');
 	$timezone = date_default_timezone_get();
@@ -147,6 +204,20 @@ function output_name() {
 		echo "<p>Error: Unable to execute 'uname', 'hostname', or 'uptime'. Please check permissions or configuration.</p>";	}
 }
 
+/**
+ * Outputs the status of a list of services in an HTML table format.
+ *
+ * For each service in the provided associative array, this function attempts to open a socket connection
+ * to the specified host and port to determine if the service is running. The status is displayed with a
+ * colored symbol (green checkmark for running, red cross for not running) in the table.
+ *
+ * The function outputs two tables: one for services at even indices and one for services at odd indices.
+ * Each table row contains the status symbol, service name, and the hostname (first segment of the host).
+ *
+ * @param array $services An associative array of services, where the key is the service name and the value is a string in the format "host:port".
+ *
+ * @return void
+ */
 function output_service($services) {
 	$count = 0;
 	output_service_header();
@@ -193,6 +264,14 @@ function output_service($services) {
 	output_service_footer();
 }
 
+/**
+ * Outputs the HTML header for the services section.
+ *
+ * This function generates the opening HTML for a table with headers
+ * for Status, Service, and Host, intended to be used in a system check interface.
+ *
+ * @return void
+ */
 function output_service_header() {
 	echo '<div class="float-left"><table class="section">';
 	echo '<tr class="header">';
@@ -202,10 +281,38 @@ function output_service_header() {
 	echo '</tr>';
 }
 
+/**
+ * Outputs the closing tags for a table and a div, typically used as a footer for a service section.
+ *
+ * This function should be called after the corresponding opening tags have been output.
+ *
+ * @return void
+ */
 function output_service_footer() {
 	echo '</table></div>';
 }
 
+/**
+ * Outputs an HTML table displaying the health and temperature of all detected disk drives.
+ *
+ * This function uses `lsblk` to list all block devices (drives) and `smartctl` to query
+ * their SMART status and temperature. For each detected drive, it displays:
+ *   - Drive device name
+ *   - Temperature (if available)
+ *   - SMART overall health status (if available)
+ *
+ * Requirements:
+ *   - The `lsblk` utility must be installed and available in the system path.
+ *   - The `smartctl` utility must be installed and available in the system path.
+ *   - The script must have permission to run `smartctl` (may require sudo).
+ *
+ * Output:
+ *   - Prints an HTML table with the drive information.
+ *
+ * Notes:
+ *   - If `lsblk` is not found, an error message is printed and the function returns.
+ *   - If SMART data or temperature is not available for a drive, 'N/A' is displayed.
+ */
 function output_disk_health() {
 	$smartApp = 'sudo ' . trim(`which smartctl`);
 	$lsblkApp = trim(`which lsblk`);
@@ -262,6 +369,16 @@ function output_disk_health() {
 	echo '</table>';
 }
 
+/**
+ * Outputs the contents of the /proc/mdstat file in an HTML table format.
+ *
+ * This function reads the first 512 bytes of the /proc/mdstat file, which contains
+ * information about RAID devices on Linux systems. Each non-empty line from the file
+ * is displayed as a row in an HTML table, with special characters escaped for safety.
+ * If the file does not exist, an error message is displayed instead.
+ *
+ * @return void
+ */
 function output_raid() {
 	$myFile = '/proc/mdstat';
 
@@ -284,6 +401,23 @@ function output_raid() {
 	}
 }
 
+/**
+ * Outputs the status information of a UPS device using the 'upsc' command.
+ *
+ * This function checks for the presence of the 'upsc' utility, executes it with the specified UPS device,
+ * parses the output for status, charge, load, and runtime, and displays the information in a formatted HTML block.
+ *
+ * Status codes are mapped to human-readable descriptions:
+ *   - "OL": Online (power ok)
+ *   - "OB": On Battery (power failure)
+ *   - "LB": Low Battery (backup power low)
+ *
+ * If the 'upsc' utility is not found or cannot be executed, an error message is displayed.
+ *
+ * @param string $upsDev The UPS device identifier to query (e.g., 'myups@localhost').
+ *
+ * @return void
+ */
 function output_ups($upsDev) {
 	$upsApp = trim(`which upsc`);
 
@@ -324,6 +458,16 @@ function output_ups($upsDev) {
 	}
 }
 
+/**
+ * Outputs a table of sensor information retrieved from the system's `sensors` command.
+ *
+ * This function executes the `sensors` command to gather hardware sensor data (such as temperature, voltage, etc.),
+ * parses the output, and displays it in an HTML table format. It allows exclusion of lines matching a specified pattern.
+ *
+ * @param string $sensor_exclude_list A regular expression pattern. Lines matching this pattern will be excluded from the output.
+ *
+ * @return void Outputs HTML directly. Displays an error message if the `sensors` command is not available or fails to execute.
+ */
 function output_sensors($sensor_exclude_list) {
 	$sensors_cmd = trim(`which sensors`);
 	$matched = 0;
@@ -367,6 +511,27 @@ function output_sensors($sensor_exclude_list) {
 }
 ?>
 
+/**
+ * Renders a system check dashboard as an HTML table.
+ *
+ * The table includes the following sections:
+ * - Header with "System Check" title and action buttons for toggling theme and refreshing data.
+ * - System information (output_name)
+ * - Memory usage (output_mem)
+ * - Services status (output_service)
+ * - Sensor readings (output_sensors)
+ * - UPS (Uninterruptible Power Supply) status (output_ups)
+ * - Filesystem information (output_df)
+ * - Disk health status (output_disk_health)
+ * - RAID information (output_raid)
+ *
+ * Each section is rendered by calling its respective PHP output function.
+ * 
+ * @param array $services            List of services to check and display.
+ * @param array $sensor_exclude_list List of sensors to exclude from display.
+ * @param string $upsDev             UPS device identifier.
+ * @param array $dev_exclude_list    List of filesystems to exclude from display.
+ */
 <table border=1 align=center cellpadding=2 cellspacing=0>
 <thead>
 <tr><td style="vertical-align: top;">
