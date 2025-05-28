@@ -341,6 +341,12 @@ function output_sensors($sensor_exclude_list) {
 		else {
 			$lines = preg_split("/\n/", $output);
 
+			echo '<table class="section">';
+			echo '<tr class="header">';
+			echo '<td>&nbsp;Sensor&nbsp;</td>';
+			echo '<td>&nbsp;Information&nbsp;</td>';
+			echo '</tr>';
+
 			foreach ($lines as $line) {
 				if (strpos($line, ':') !== false) {
 					list ($sensor, $data) = preg_split('/:/', $line);
