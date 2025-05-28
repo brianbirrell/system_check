@@ -576,7 +576,7 @@ function output_sensors($sensor_exclude_list) {
 			// If the line is not empty and does not contain a colon, treat it as a section header
 			elseif (!empty($line)){
 				echo '<tr class="body">';
-				echo "<td colspan=\"2\">$line</td>";
+				echo "<td colspan=\"2\"><b>$line</b></td>";
 				echo '</tr>';
 			}
 		}
