@@ -97,3 +97,8 @@ body {
     display: flex;
     vertical-align: middle;
   }
+
+  .status-symbol {
+    font-size: 13pt;
+    color: white;
+  }

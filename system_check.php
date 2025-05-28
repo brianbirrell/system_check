@@ -99,45 +99,46 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
  * @return void
  */
 function output_df($dev_exclude_list) {
-	$df_cmd = trim(`which df`);
 	$matched = 0;
+	$df_cmd = trim(`which df`);
 
-	if (file_exists("$df_cmd")) {
-		$output = `$df_cmd -h`;
-		$lines = preg_split("/\n/", $output);
-		echo '<table class="section">';
-		for ($i = 0; $i < sizeof($lines) && strlen($lines[$i]) > 1; $i++) {
-			$cols = preg_split("/[\s]+/", $lines[$i]);
-			if ($i == 0) {
-				echo '<tr class="header">';
+	if (empty($df_cmd) && !file_exists($df_cmd)) {
+		echo "<p>Error: 'df' command not found. Please ensure it is installed and accessible.</p>";
+		return;
+	}
+
+	$output = shell_exec(escapeshellcmd("$df_cmd -h"));
+	$lines = preg_split("/\n/", $output);
+	echo '<table class="section">';
+	for ($i = 0; $i < sizeof($lines) && strlen($lines[$i]) > 1; $i++) {
+		$cols = preg_split("/[\s]+/", $lines[$i]);
+		if ($i == 0) {
+			echo '<tr class="header">';
+			for ($j = 0; $j < 6; $j++) {
+				echo "<td align=left>&nbsp;$cols[$j]&nbsp;</td>";
+			}
+			echo '</tr>';
+		} else {
+			if (!preg_match("/$dev_exclude_list/i", $lines[$i])) {
+				echo '<tr class="body">';
 				for ($j = 0; $j < 6; $j++) {
-					echo "<td align=left>&nbsp;$cols[$j]&nbsp;</td>";
+					if ($j == 0 || $j == 5)
+						$align = "left";
+					else if ($j == 1 || $j == 2 || $j == 3)
+						$align = "right";
+					else if ($j == 4)
+						$align = "center";
+					echo "<td align=$align>&nbsp;$cols[$j]&nbsp;</td>";
 				}
 				echo '</tr>';
 			} else {
-				if (!preg_match("/$dev_exclude_list/i", $lines[$i])) {
-					echo '<tr class="body">';
-					for ($j = 0; $j < 6; $j++) {
-						if ($j == 0 || $j == 5)
-							$align = "left";
-						else if ($j == 1 || $j == 2 || $j == 3)
-							$align = "right";
-						else if ($j == 4)
-							$align = "center";
-						echo "<td align=$align>&nbsp;$cols[$j]&nbsp;</td>";
-					}
-					echo '</tr>';
-				} else {
-					$matched++;
-				}
+				$matched++;
 			}
 		}
-		echo '</table>';
-		if ($matched > 0) {
-			echo "<p>* Lines matching \"$dev_exclude_list\" excluded</p>";
-		}
-	} else {
-		echo "<p>Error: Unable to execute 'df'. Please check permissions or configuration.</p>";
+	}
+	echo '</table>';
+	if ($matched > 0) {
+		echo "<p>* Lines matching \"$dev_exclude_list\" excluded</p>";
 	}
 }
 
@@ -154,24 +155,25 @@ function output_df($dev_exclude_list) {
 function output_mem() {
 	$free_cmd = trim(`which free`);
 
-	if (file_exists("$free_cmd")) {
-		$output = `$free_cmd -h`;
-		$lines = preg_split("/\n/", $output);
-		echo '<table class="section">';
-		for ($i = 0; $i < sizeof($lines) && strlen($lines[$i]) > 1; $i++) {
-			$cols = preg_split("/[\s]+/", $lines[$i]);
-			if ($i == 0)
-				echo '<tr class="header">';
-			else
-				echo '<tr class="body">';
-			foreach ($cols as $data)
-				echo "<td align=right>&nbsp;$data&nbsp;</td>";
-			echo '</tr>';
-		}
-		echo '</table>';
-	} else {
-		echo "<p>Error: Unable to execute 'free'. Please check permissions or configuration.</p>";
+	if (empty($free_cmd) && !file_exists($free_cmd)) {
+		echo "<p>Error: 'free' command not found. Please ensure it is installed and accessible.</p>";
+		return;
 	}
+
+	$output = shell_exec(escapeshellcmd("$free_cmd -h"));
+	$lines = preg_split("/\n/", $output);
+	echo '<table class="section">';
+	for ($i = 0; $i < sizeof($lines) && strlen($lines[$i]) > 1; $i++) {
+		$cols = preg_split("/[\s]+/", $lines[$i]);
+		if ($i == 0)
+			echo '<tr class="header">';
+		else
+			echo '<tr class="body">';
+		foreach ($cols as $data)
+			echo "<td align=right>&nbsp;$data&nbsp;</td>";
+		echo '</tr>';
+	}
+	echo '</table>';
 }
 
 /**
@@ -192,25 +194,51 @@ function output_name() {
 	$hostname_cmd = trim(`which hostname`);
 	$uptime_cmd = trim(`which uptime`);
 
-	if (file_exists("$uname_cmd") && file_exists("$hostname_cmd") && file_exists("$uptime_cmd")) {
-		$version = trim(`$uname_cmd -sr`);
-		$name = trim(`$hostname_cmd -f`);
-		$uptime = trim(`$uptime_cmd`);
+	// Check if the 'uname', 'hostname', and 'uptime' commands are available
+	if (empty($uname_cmd) || !file_exists($uname_cmd)) {
+		echo "<p>Error: 'uname' command not found. Please ensure it is installed and accessible.</p>";
+		return;
+	}
+	if (empty($hostname_cmd) || !file_exists($hostname_cmd)) {
+		echo "<p>Error: 'hostname' command not found. Please ensure it is installed and accessible.</p>";
+		return;
+	}
+	if (empty($uptime_cmd) || !file_exists($uptime_cmd)) {
+		echo "<p>Error: 'uptime' command not found. Please ensure it is installed and accessible.</p>";
+		return;
+	}
+	
+	$uptime = trim(`$uptime_cmd`);
+	if (empty($uptime)) {
+		echo "<p>Error: Failed to retrieve uptime information. Please check the command or system configuration.</p>";
+		return;
+	}
+	// Get the system version
+	$version = trim(`$uname_cmd -sr`);
+	if (empty($version)) {
+		echo "<p>Error: Failed to retrieve system version. Please check the command or system configuration.</p>";
+		return;
+	}
+	// Get the hostname
+	$name = trim(`$hostname_cmd -f`);
+	if (empty($name)) {
+		echo "<p>Error: Failed to retrieve hostname. Please check the command or system configuration.</p>";
+		return;
+	}
 
-		echo '<table class="section">';
-		echo '<tr><td><p>';
-		echo '<b>Name:</b>&nbsp;';
-		echo "$name<br>";
-		echo '<b>Time:</b>&nbsp;';
-		echo "$date $timezone<br>";
-		echo '<b>Version:</b>&nbsp;';
-		echo "$version<br>";
-		echo '<b>Uptime:</b>&nbsp;';
-		echo "$uptime";
-		echo '</p></td></tr>';
-		echo '</table>';
-	} else {
-		echo "<p>Error: Unable to execute 'uname', 'hostname', or 'uptime'. Please check permissions or configuration.</p>";	}
+	// Output the system information in a table
+	echo '<table class="section">';
+	echo '<tr><td><p>';
+	echo '<b>Name:</b>&nbsp;';
+	echo "$name<br>";
+	echo '<b>Time:</b>&nbsp;';
+	echo "$date $timezone<br>";
+	echo '<b>Version:</b>&nbsp;';
+	echo "$version<br>";
+	echo '<b>Uptime:</b>&nbsp;';
+	echo "$uptime";
+	echo '</p></td></tr>';
+	echo '</table>';
 }
 
 /**
@@ -229,6 +257,7 @@ function output_name() {
  */
 function output_service($services) {
 	$count = 0;
+
 	output_service_header();
 	foreach ($services as $name => $location) {
 		if (!($count & 1)) {
@@ -243,8 +272,9 @@ function output_service($services) {
 				$status_color = 'green';
 				$status_symbol = '&#10003;';
 			}
-			echo "<tr class=\"body\"><td bgcolor=\"$status_color\" align=center><div align=\"center\" style=\"font-size: 13pt; color: white\">$status_symbol</div>";
-			echo "</td><td>$name</td><td>$hostname[0]</td></tr>";
+			echo "<tr class=\"body\"><td bgcolor=\"$status_color\" align=center><div align=\"center\" class=\"status-symbol\">$status_symbol</div>";
+			$hostDisplay = isset($hostname[0]) ? $hostname[0] : $host;
+			echo "</td><td>$name</td><td>$hostDisplay</td></tr>";
 		}
 		$count++;
 	}
@@ -265,7 +295,7 @@ function output_service($services) {
 				$status_color = 'green';
 				$status_symbol = '&#10003;';
 			}
-			echo "<tr class=\"body\"><td bgcolor=\"$status_color\" align=center><div align=\"center\" style=\"font-size: 13pt; color: white\">$status_symbol</div>";
+			echo "<tr class=\"body\"><td bgcolor=\"$status_color\" align=center><div align=\"center\" class=\"status-symbol\">$status_symbol</div>";
 			echo "</td><td>$name</td><td>$hostname[0]</td></tr>";
 		}
 		$count++;
@@ -328,16 +358,16 @@ function output_disk_health() {
 	$lsblkOpts = "-dpn -I 8,259 -o NAME";
 	$smartApp = trim(`which smartctl`);
 
-	if (empty($lsblkApp) && !file_exists($lsblkApp) && !is_executable($lsblkApp)) {
+	if (empty($lsblkApp) && !file_exists($lsblkApp)) {
 		echo "<p>Error: 'lsblk' command not found. Please ensure it is installed and accessible.</p>";
 		return;
 	}
-	if (empty($smartApp) && !file_exists($smartApp) && !is_executable($smartApp)) {
+	if (empty($smartApp) && !file_exists($smartApp)) {
 		echo "<p>Error: 'smartctl' command not found. Please ensure it is installed and accessible.</p>";
 		return;
 	}
 
-	$lsblkOutput = `$lsblkApp $lsblkOpts`;
+	$lsblkOutput = shell_exec(escapeshellcmd("$lsblkApp $lsblkOpts"));
 	$drives = array_filter(array_map('trim', explode("\n", $lsblkOutput)));
 
 	echo '<table class="section">';
@@ -394,27 +424,28 @@ function output_disk_health() {
 function output_raid() {
 	$myFile = '/proc/mdstat';
 
-	if (file_exists("$myFile")) {
-		$fh = fopen($myFile, 'r');
-		if ($fh === false) {
-			echo "<p>Error: Unable to open $myFile. Please check permissions or configuration.</p>";
-			return;
-		}
-		$theData = stream_get_contents($fh);
-		fclose($fh);
-
-		$lines = preg_split("/\n/", $theData);
-		echo '<table class="section">';
-		for ($i = 0; $i < sizeof($lines) && strlen($lines[$i]) > 1; $i++) {
-			echo '<tr class="body"><td>';
-			echo htmlspecialchars($lines[$i]);
-			echo '</td></tr>';
-		}
-		echo '</table>';
-	}
-	else {
+	if (!file_exists("$myFile")) {
 		echo "<p>Error: Unable to find $myFile. Please check permissions or configuration.</p>";
+		return;
 	}
+
+	$fh = fopen($myFile, 'r');
+	if ($fh === false) {
+		echo "<p>Error: Unable to open $myFile. Please check permissions or configuration.</p>";
+		return;
+	}
+
+	$theData = stream_get_contents($fh);
+	fclose($fh);
+
+	$lines = preg_split("/\n/", $theData);
+	echo '<table class="section">';
+	for ($i = 0; $i < sizeof($lines) && strlen($lines[$i]) > 1; $i++) {
+		echo '<tr class="body"><td>';
+		echo htmlspecialchars($lines[$i]);
+		echo '</td></tr>';
+	}
+	echo '</table>';
 }
 
 /**
@@ -437,55 +468,55 @@ function output_raid() {
 function output_ups($upsDev) {
 	$upsApp = trim(`which upsc`);
 
-	if (!empty($upsApp) && file_exists("$upsApp")) {
-		$output = `$upsApp $upsDev`;
-
-		if (preg_match('/status: (.*)/', $output, $matches)) {
-			$status = $matches[1];
-		} else {
-			$status = 'Unknown';
-		}
-
-		# One of "OL," "OB," or "LB," which are online (power OK),
-		# on battery (power failure), or low battery, respectively.
-		if ($status == 'OL') {
-			$statusText = "Online (power ok)";
-		}
-		elseif ($status == 'OB') {
-			$statusText = "On Battery (power failure)";
-		}
-		elseif ($status == 'LB') {
-			$statusText = "Low Battery (backup power low)";
-		}
-		if (preg_match('/charge: (.*)/', $output, $matches)) {
-			$charge = "{$matches[1]}%";
-		} else {
-			$charge = 'N/A';
-		}
-
-		preg_match('/charge: (.*)/', $output, $matches);
-		if (preg_match('/charge: (.*)/', $output, $matches)) {
-			$charge = $matches[1] . '%';
-		} else {
-			$charge = 'N/A';
-		}
-		if (preg_match('/load: (.*)/', $output, $matches)) {
-			$load = $matches[1] . '%';
-		} else {
-			$load = 'N/A';
-		}
-		if (preg_match('/runtime: (.*)/', $output, $matches)) {
-			$runtime = $matches[1] . 'sec';
-		} else {
-			$runtime = 'N/A';
-		}
-		echo '<p>';
-		echo "$upsDev:<br>";
-		echo "&nbsp;&nbsp;&nbsp;Status=$statusText, Charge=$charge, Runtime=$runtime, Load=$load";
-		echo '</p>';
-	} else {
+	if (empty($upsApp) && !file_exists("$upsApp")) {
 		echo "<p>Error: Unable to execute 'upsc'. Please check permissions or configuration.</p>";
+		return;
 	}
+
+	$output = shell_exec(escapeshellcmd("$upsApp " . escapeshellarg($upsDev)));
+	if (empty($output)) {
+		echo "<p>Error: Unable to retrieve UPS data. Please check the UPS device or configuration.</p>";
+		return;
+	}
+
+	if (preg_match('/status: (.*)/', $output, $matches)) {
+		$status = $matches[1];
+	} else {
+		$status = 'Unknown';
+	}
+
+	# One of "OL," "OB," or "LB," which are online (power OK),
+	# on battery (power failure), or low battery, respectively.
+	if ($status == 'OL') {
+		$statusText = "Online (power ok)";
+	}
+	elseif ($status == 'OB') {
+		$statusText = "On Battery (power failure)";
+	}
+	elseif ($status == 'LB') {
+		$statusText = "Low Battery (backup power low)";
+	}
+
+	preg_match('/charge: (.*)/', $output, $matches);
+	if (preg_match('/charge: (.*)/', $output, $matches)) {
+		$charge = $matches[1] . '%';
+	} else {
+		$charge = 'N/A';
+	}
+	if (preg_match('/load: (.*)/', $output, $matches)) {
+		$load = $matches[1] . '%';
+	} else {
+		$load = 'N/A';
+	}
+	if (preg_match('/runtime: (.*)/', $output, $matches)) {
+		$runtime = $matches[1] . 'sec';
+	} else {
+		$runtime = 'N/A';
+	}
+	echo '<p>';
+	echo "$upsDev:<br>";
+	echo "&nbsp;&nbsp;&nbsp;Status=$statusText, Charge=$charge, Runtime=$runtime, Load=$load";
+	echo '</p>';
 }
 
 /**
@@ -502,41 +533,42 @@ function output_sensors($sensor_exclude_list) {
 	$sensors_cmd = trim(`which sensors`);
 	$matched = 0;
 
-	if (!empty($sensors_cmd) && preg_match('/^\/.+/', $sensors_cmd) && file_exists("$sensors_cmd")) {
-		$retval = null;
-		$output = [];
-		$output = htmlspecialchars(shell_exec("$sensors_cmd 2>&1"), ENT_QUOTES, 'UTF-8');
-
-		if ($output === null) {
-			echo "<p>Error: Unable to retrieve sensor data. Please contact the administrator.</p>";
-			return;
-		}
-		else {
-			$lines = preg_split("/\n/", $output);
-
-			echo '<table class="section">';
-			echo '<tr class="header">';
-			echo '<td>&nbsp;Sensor&nbsp;</td>';
-			echo '<td>&nbsp;Information&nbsp;</td>';
-			echo '</tr>';
-			foreach ($lines as $line) {
-				if (!empty($line) && strpos($line, ':') !== false) {
-					list ($sensor, $data) = preg_split('/:/', $line);
-					echo '<tr class="body">';
-					echo "<td>$sensor</td>";
-					echo "<td>$data</td>";
-					echo '</tr>';
-				} elseif (@preg_match("/$sensor_exclude_list/i", '') !== false && !preg_match("/$sensor_exclude_list/i", $line)) {
-					$matched++;
-				}
-			}
-			echo '</table>';
-			if ($matched > 0) {
-				echo "<p>* Lines matching \"$sensor_exclude_list\" excluded</p>";
-			}
-		}	
-	} else {
+	if (empty($sensors_cmd) && !file_exists("$sensors_cmd")) {
 		echo "<p>Error: Unable to execute 'sensors'. Please check permissions or configuration.</p>";
+		return;
+	}
+
+	$retval = null;
+	$output = [];
+	$output = htmlspecialchars(shell_exec("$sensors_cmd 2>&1"), ENT_QUOTES, 'UTF-8');
+
+	if ($output === null) {
+		echo "<p>Error: Unable to retrieve sensor data. Please contact the administrator.</p>";
+		return;
+	}
+	else {
+		$lines = preg_split("/\n/", $output);
+
+		echo '<table class="section">';
+		echo '<tr class="header">';
+		echo '<td>&nbsp;Sensor&nbsp;</td>';
+		echo '<td>&nbsp;Information&nbsp;</td>';
+		echo '</tr>';
+		foreach ($lines as $line) {
+			if (!empty($line) && strpos($line, ':') !== false) {
+				list ($sensor, $data) = preg_split('/:/', $line);
+				echo '<tr class="body">';
+				echo "<td>$sensor</td>";
+				echo "<td>$data</td>";
+				echo '</tr>';
+			} elseif (@preg_match("/$sensor_exclude_list/i", '') !== false && !preg_match("/$sensor_exclude_list/i", $line)) {
+				$matched++;
+			}
+		}
+		echo '</table>';
+		if ($matched > 0) {
+			echo "<p>* Lines matching \"$sensor_exclude_list\" excluded</p>";
+		}
 	}
 }
 ?>
