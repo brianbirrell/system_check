@@ -386,7 +386,7 @@ function output_disk_health() {
 
 		// Parse SMART health
 		foreach ($smartOutput as $line) {
-			if (preg_match('/SMART overall-health self-assessment test result:\s*(\w+)/i', $line, $m)) {
+			if (preg_match('/SMART overall-health.*?:\s*(\w+)/', $line, $m)) {
 				$health = strtoupper($m[1]);
 			}
 			// Try to find temperature (ATA or NVMe)
@@ -546,56 +546,7 @@ function output_sensors($sensor_exclude_list) {
 
 	$retval = null;
 	$output = [];
-	//$output = htmlspecialchars(shell_exec(escapeshellcmd("$sensors_cmd"), ENT_QUOTES, 'UTF-8');
-$output = <<<DATA
-amdgpu-pci-2600
-Adapter: PCI adapter
-vddgfx:      725.00 mV
-fan1:         201 RPM  (min =    0 RPM, max = 4500 RPM)
-edge:         +45.0°C  (crit = +94.0°C, hyst = -273.1°C)
-PPT:           6.18 W  (cap = 135.00 W)
-
-nct6795-isa-0a20
-Adapter: ISA adapter
-CPU Core:       1.06 V  (min =  +0.40 V, max =  +1.55 V)
-ATX +5V:        5.08 V  (min =  +4.76 V, max =  +5.24 V)
-AVCC Analog:    3.38 V  (min =  +2.98 V, max =  +3.63 V)
-ATX +3.3V:      3.33 V  (min =  +2.98 V, max =  +3.63 V)
-ATX +12V:      12.19 V  (min = +11.42 V, max = +12.58 V)
-3VSB Standby:   3.38 V  (min =  +2.98 V, max =  +3.63 V)
-RTC Battery:    3.26 V  (min =  +2.70 V, max =  +3.63 V)
-CPU +1.8V:      1.84 V  (min =  +1.64 V, max =  +2.00 V)
-CPU SoC:        1.11 V  (min =  +0.90 V, max =  +1.55 V)
-DDRAM:          1.38 V  (min =  +1.10 V, max =  +1.50 V)
-PUMP_FAN1:       0 RPM  (min =    0 RPM)
-CPU_FAN1:      993 RPM  (min =    0 RPM)
-SYS_FAN1:      976 RPM  (min =    0 RPM)
-SYS_FAN2:        0 RPM  (min =    0 RPM)
-SYS_FAN3:        0 RPM  (min =    0 RPM)
-SYS_FAN4:        0 RPM  (min =    0 RPM)
-Super I/O:     +36.0°C  (high = +50.0°C, hyst = +45.0°C)  sensor = CPU diode
-SoC VRM:       +33.0°C  (high = +115.0°C, hyst = +90.0°C)  sensor = thermistor
-CPU VRM:       +49.5°C  (high = +115.0°C, hyst = +90.0°C)  sensor = thermistor
-PCH Temp:      +35.0°C    sensor = thermistor
-Agent0 Dimm0:   +0.0°C
-TSI0_TEMP:     +40.2°C
-Intrusion:    ALARM
-
-nvme-pci-0100
-Adapter: PCI adapter
-Composite:    +37.9°C  (low  = -20.1°C, high = +83.8°C)
-                       (crit = +88.8°C)
-
-k10temp-pci-00c3
-Adapter: PCI adapter
-CPU Temp:     +39.6°C
-Tccd1:        +34.5°C
-
-nvme-pci-2500
-Adapter: PCI adapter
-Composite:    +43.9°C  (low  = -60.1°C, high = +89.8°C)
-                       (crit = +94.8°C)
-DATA;
+	$output = htmlspecialchars(shell_exec(escapeshellcmd("$sensors_cmd")), ENT_QUOTES, 'UTF-8');
 
 	if (empty($output)) {
 		echo "<p>Error: Unable to retrieve sensor data. Please contact the administrator.</p>";
@@ -614,8 +565,10 @@ DATA;
 		foreach ($lines as $line) {
 			$line = trim($line);
 
-			if (empty($line) || preg_match($sensor_exclude_list, $line)) continue; // Exclude matching lines
-
+			if (!empty($line) && preg_match("/$sensor_exclude_list/i", $line)) {
+				$matched++;
+				continue; // Exclude matching lines
+			}
 			if (strpos($line, ':') === false) {
 				$device = $line;
 				echo "<tr class=\"body\"><td colspan='2'><strong>{$device}</strong></td></tr>";
@@ -625,7 +578,7 @@ DATA;
 			list($key, $value) = explode(':', $line, 2);
 			$value = preg_replace('/\s*\([^)]*\)/', '', trim($value)); // Remove inline parentheses content
 
-			echo "<tr class=\"body\"><td>&ensp;&ensp;{$key}:&nbsp;&nbsp;</td><td>&nbsp;&nbsp;{$value}</td></tr>";
+			echo "<tr class=\"body\"><td>&ensp;&ensp;{$key}:&nbsp;</td><td>&nbsp;&nbsp;{$value}</td></tr>";
 		}
 
 		echo "</table>";

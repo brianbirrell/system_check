@@ -27,7 +27,7 @@ table.section tr.body {
 
 /* Specific table for sensors */
 table.sensors {
-  width: 80%;
+  width: 90%;
   min-width: 150px; /* Minimum width for the table */
 }
 
