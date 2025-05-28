@@ -7,7 +7,14 @@
  */
 $config = require 'config.php';
 
-// Extract configuration values
+/**
+ * Retrieves configuration values for system check.
+ *
+ * @var array $services            List of services to be checked.
+ * @var string $upsDev             Device identifier for the UPS.
+ * @var array $dev_exclude_list    List of device names to exclude from checks.
+ * @var array $sensor_exclude_list List of sensor names to exclude from checks.
+ */
 $services = $config['services'];
 $upsDev = $config['upsDev'];
 $dev_exclude_list = $config['dev_exclude_list'];
