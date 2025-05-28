@@ -563,14 +563,17 @@ function output_sensors($sensor_exclude_list) {
 		foreach ($lines as $line) {
 			if (@preg_match("/$sensor_exclude_list/i", '') !== false && !preg_match("/$sensor_exclude_list/i", $line)) {
 				$matched++;
+				continue; // Skip lines matching the exclude list
 			}
-			elseif (!empty($line) && strpos($line, ':') !== false) {
+			// If the line is not empty and contains a colon, treat it as sensor data
+			if (!empty($line) && strpos($line, ':') !== false) {
 				list ($sensor, $data) = preg_split('/:/', $line);
 				echo '<tr class="body">';
 				echo "<td>$sensor</td>";
 				echo "<td>$data</td>";
 				echo '</tr>';
 			}
+			// If the line is not empty and does not contain a colon, treat it as a section header
 			elseif (!empty($line)){
 				echo '<tr class="body">';
 				echo '<td colspan="2">$line</td>';
