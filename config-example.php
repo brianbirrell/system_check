@@ -32,6 +32,21 @@ return [
     ],
 
     // This is the name of the UPS device you want to monitor.
-    'upsDev' => 'HomeOffice@quantum',
+    'upsDev' => 'HomeOffice@localhost',
+
+    // Example format: 'SYS_FAN[2-4]|PUMP_FAN[1]|Intrusion' excludes sensors named SYS_FAN2, SYS_FAN3, SYS_FAN4, PUMP_FAN1, and Intrusion.
+    // Additional examples:
+    // 'CPU_TEMP|GPU_TEMP' excludes sensors named CPU_TEMP and GPU_TEMP.
+    // 'FAN[0-9]|TEMP_SENSOR' excludes sensors named FAN0, FAN1, FAN2, etc., and TEMP_SENSOR.
+    // Edge case: '.*_FAN' matches any sensor name ending with '_FAN'.
+    'sensor_exclude_list' => 'SYS_FAN[2-4]|PUMP_FAN[1]|Intrusion',
+
+    // Regular expression pattern to exclude temporary or system files from the filesystem entries.
+    // - 'none': Excludes entries with 'none', typically representing unmounted or placeholder devices.
+    // - 'udev': Excludes udev-managed devices, which are dynamically created by the system.
+    // - 'tmpfs': Excludes temporary file systems used for volatile storage.
+    // - '/sys': Excludes system files related to kernel and hardware information.
+    // - '/snap': Excludes filesystems related to Snap package management.
+    'dev_exclude_list' => '^none|udev|tmpfs|\/sys|\/snap',
 ];
 ?>

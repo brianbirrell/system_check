@@ -1,91 +1,114 @@
 table.main {
-    border: 1;
-    align: center;
-    cellpadding: 2;
-    cellspacing: 0;
-  }
-  
-  table.section {
-    border: 0;
-    align: left;
-    cellpadding: 1;
-    cellspacing: 1;
-  }
-  
-  table.section tr.header {
-    font-family: Verdana;
-    color: black;
-    font-size: 80%;
-    background-color: #C0C0C0;
-  }
-  
-  table.section tr.body {
-    font-family: Verdana;
-    color: black;
-    font-size: 60%;
-  }
-  
-  h1 {
-    font-family: Verdana;
-    color: black;
-    font-size: 150%;
-  }
-  
-  h2 {
-    font-family: Verdana;
-    color: black;
-    font-size: 100%;
-  }
-  
-  p {
-    font-family: Verdana;
-    color: black;
-    font-size: 60%;
-  }
-  
-  body {
-    font-family: Verdana;
-    color: black;
-    font-size: 60%;
-  }
-  
-  div.float-left {
-    float: left;
-    padding: 5px;
-  }
-  
-  .refresh-button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    height: 30px;
-  }
-  
-  .refresh-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .theme-toggle-button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    height: 30px;
-  }
-  
-  .theme-toggle-button:hover {
-    background-color: #0056b3;
-  }
+  border: 1;
+}
 
-  .btn-container {
-    display: flex;
-    vertical-align: middle;
-  }
-  
+table.section {
+  border: 0;
+  width: 100%;
+  min-width: 150px; /* Minimum width for the table */
+}
+
+table.section tr.header {
+  font-family: Verdana;
+  color: black;
+  font-size: 80%;
+  background-color: #C0C0C0;
+}
+
+table.section tr.body {
+  font-family: Verdana;
+  color: black;
+  font-size: 60%;
+}
+
+/* Specific table for sensors */
+table.sensors {
+  width: 100%;
+  min-width: 150px; /* Minimum width for the table */
+}
+
+table.sensors tr.header {
+  font-family: Verdana;
+  color: black;
+  font-size: 80%;
+  background-color: #C0C0C0;
+}
+
+table.sensors td:nth-child(1) {
+  width: 40%; /* Key column width */
+  font-size: 60%;
+}
+
+table.sensors td:nth-child(2) {
+  width: 60%; /* Value column width */
+  font-size: 60%;
+}
+
+h1 {
+  font-family: Verdana;
+  color: black;
+  font-size: 150%;
+}
+
+h2 {
+  font-family: Verdana;
+  color: black;
+  font-size: 100%;
+}
+
+p {
+  font-family: Verdana;
+  color: black;
+  font-size: 60%;
+}
+
+body {
+  font-family: Verdana;
+  color: black;
+  font-size: 60%;
+}
+
+div.float-left {
+  float: left;
+  padding: 5px;
+}
+
+.refresh-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  height: 30px;
+}
+
+.refresh-button:hover {
+  background-color: #0056b3;
+}
+
+.theme-toggle-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  height: 30px;
+}
+
+.theme-toggle-button:hover {
+  background-color: #0056b3;
+}
+
+.btn-container {
+  display: flex;
+  vertical-align: middle;
+}
+
+.status-symbol {
+  font-size: 13pt;
+  color: white;
+}
