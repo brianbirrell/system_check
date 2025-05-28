@@ -321,14 +321,19 @@ function output_service_footer() {
  * Notes:
  *   - If `lsblk` is not found, an error message is printed and the function returns.
  *   - If SMART data or temperature is not available for a drive, 'N/A' is displayed.
+ *   - The `smartctl` command may require `sudo` permissions to access drive information.
  */
 function output_disk_health() {
-	$smartApp = 'sudo ' . trim(`which smartctl`);
 	$lsblkApp = trim(`which lsblk`);
 	$lsblkOpts = "-dpn -I 8,259 -o NAME";
+	$smartApp = trim(`which smartctl`);
 
-	if (!file_exists($lsblkApp)) {
-		echo "$lsblkApp not found!\n";
+	if (empty($lsblkApp) && !file_exists($lsblkApp) && !is_executable($lsblkApp)) {
+		echo "<p>Error: 'lsblk' command not found. Please ensure it is installed and accessible.</p>";
+		return;
+	}
+	if (empty($smartApp) && !file_exists($smartApp) && !is_executable($smartApp)) {
+		echo "<p>Error: 'smartctl' command not found. Please ensure it is installed and accessible.</p>";
 		return;
 	}
 
@@ -343,10 +348,8 @@ function output_disk_health() {
 	echo '</tr>';
 
 	foreach ($drives as $drive) {
-		$smartOutput = [];
-		$retval = 1;
-		exec("$smartApp -H -A $drive 2>&1", $smartOutput, $retval);
-
+		$sanitizedDrive = escapeshellarg($drive);
+		exec("sudo $smartApp -H -A $sanitizedDrive 2>&1", $smartOutput, $retval);
 		// Default values
 		$health = 'N/A';
 		$temp = 'N/A';
@@ -393,7 +396,11 @@ function output_raid() {
 
 	if (file_exists("$myFile")) {
 		$fh = fopen($myFile, 'r');
-		$theData = fread($fh, 512);
+		if ($fh === false) {
+			echo "<p>Error: Unable to open $myFile. Please check permissions or configuration.</p>";
+			return;
+		}
+		$theData = stream_get_contents($fh);
 		fclose($fh);
 
 		$lines = preg_split("/\n/", $theData);
@@ -430,11 +437,14 @@ function output_raid() {
 function output_ups($upsDev) {
 	$upsApp = trim(`which upsc`);
 
-	if (file_exists("$upsApp")) {
+	if (!empty($upsApp) && file_exists("$upsApp")) {
 		$output = `$upsApp $upsDev`;
 
-		preg_match('/status: (.*)/', $output, $matches);
-		$status = $matches[1];
+		if (preg_match('/status: (.*)/', $output, $matches)) {
+			$status = $matches[1];
+		} else {
+			$status = 'Unknown';
+		}
 
 		# One of "OL," "OB," or "LB," which are online (power OK),
 		# on battery (power failure), or low battery, respectively.
@@ -447,17 +457,28 @@ function output_ups($upsDev) {
 		elseif ($status == 'LB') {
 			$statusText = "Low Battery (backup power low)";
 		}
-		else {
-			$statusText = $status;
+		if (preg_match('/charge: (.*)/', $output, $matches)) {
+			$charge = "{$matches[1]}%";
+		} else {
+			$charge = 'N/A';
 		}
 
 		preg_match('/charge: (.*)/', $output, $matches);
-		$charge = $matches[1] . '%';
-		preg_match('/load: (.*)/', $output, $matches);
-		$load = $matches[1] . '%';
-		preg_match('/runtime: (.*)/', $output, $matches);
-		$runtime = $matches[1] . 'sec';
-
+		if (preg_match('/charge: (.*)/', $output, $matches)) {
+			$charge = $matches[1] . '%';
+		} else {
+			$charge = 'N/A';
+		}
+		if (preg_match('/load: (.*)/', $output, $matches)) {
+			$load = $matches[1] . '%';
+		} else {
+			$load = 'N/A';
+		}
+		if (preg_match('/runtime: (.*)/', $output, $matches)) {
+			$runtime = $matches[1] . 'sec';
+		} else {
+			$runtime = 'N/A';
+		}
 		echo '<p>';
 		echo "$upsDev:<br>";
 		echo "&nbsp;&nbsp;&nbsp;Status=$statusText, Charge=$charge, Runtime=$runtime, Load=$load";
@@ -481,10 +502,10 @@ function output_sensors($sensor_exclude_list) {
 	$sensors_cmd = trim(`which sensors`);
 	$matched = 0;
 
-	if (!empty($sensors_cmd) && file_exists("$sensors_cmd")) {
+	if (!empty($sensors_cmd) && preg_match('/^\/.+/', $sensors_cmd) && file_exists("$sensors_cmd")) {
 		$retval = null;
 		$output = [];
-		$output = shell_exec("$sensors_cmd 2>&1");
+		$output = htmlspecialchars(shell_exec("$sensors_cmd 2>&1"), ENT_QUOTES, 'UTF-8');
 
 		if ($output === null) {
 			echo "<p>Error: Unable to retrieve sensor data. Please contact the administrator.</p>";
@@ -499,13 +520,13 @@ function output_sensors($sensor_exclude_list) {
 			echo '<td>&nbsp;Information&nbsp;</td>';
 			echo '</tr>';
 			foreach ($lines as $line) {
-				if (strpos($line, ':') !== false) {
+				if (!empty($line) && strpos($line, ':') !== false) {
 					list ($sensor, $data) = preg_split('/:/', $line);
 					echo '<tr class="body">';
 					echo "<td>$sensor</td>";
 					echo "<td>$data</td>";
 					echo '</tr>';
-				} elseif (!preg_match("/$sensor_exclude_list/i", $line)) {
+				} elseif (@preg_match("/$sensor_exclude_list/i", '') !== false && !preg_match("/$sensor_exclude_list/i", $line)) {
 					$matched++;
 				}
 			}
