@@ -561,15 +561,22 @@ function output_sensors($sensor_exclude_list) {
 		echo '<td>&nbsp;Information&nbsp;</td>';
 		echo '</tr>';
 		foreach ($lines as $line) {
-			if (!empty($line) && strpos($line, ':') !== false) {
+			if (@preg_match("/$sensor_exclude_list/i", '') !== false && !preg_match("/$sensor_exclude_list/i", $line)) {
+				$matched++;
+			}
+			elseif (!empty($line) && strpos($line, ':') !== false) {
 				list ($sensor, $data) = preg_split('/:/', $line);
 				echo '<tr class="body">';
 				echo "<td>$sensor</td>";
 				echo "<td>$data</td>";
 				echo '</tr>';
-			} elseif (@preg_match("/$sensor_exclude_list/i", '') !== false && !preg_match("/$sensor_exclude_list/i", $line)) {
-				$matched++;
 			}
+			elseif (!empty($line)){
+				echo '<tr class="body">';
+				echo '<td colspan="2">$line</td>';
+				echo '</tr>';
+			}
+
 		}
 		echo '</table>';
 		if ($matched > 0) {
