@@ -553,34 +553,34 @@ function output_sensors($sensor_exclude_list) {
 		return;
 	}
 	else {
-		$lines = preg_split("/\n/", $output);
-
+		$lines = explode("\n", $output);
 		echo '<table class="section">';
 		echo '<tr class="header">';
 		echo '<td>&nbsp;Sensor&nbsp;</td>';
 		echo '<td>&nbsp;Information&nbsp;</td>';
 		echo '</tr>';
+
+		$device = '';
+
 		foreach ($lines as $line) {
-			if (@preg_match("/$sensor_exclude_list/i", '') !== false && preg_match("/$sensor_exclude_list/i", $line)) {
-				$matched++;
-				continue; // Skip lines matching the exclude list
+			$line = trim($line);
+
+			if (empty($line) || preg_match($sensor_exclude_list, $line)) continue; // Exclude matching lines
+
+			if (strpos($line, ':') === false) {
+				$device = $line;
+				echo "<tr><td colspan='2'><strong>{$device}</strong></td></tr>";
+				continue;
 			}
-			// If the line is not empty and contains a colon, treat it as sensor data
-			if (!empty($line) && strpos($line, ':') !== false) {
-				list ($sensor, $data) = preg_split('/:/', $line);
-				echo '<tr class="body">';
-				echo "<td>$sensor</td>";
-				echo "<td>$data</td>";
-				echo '</tr>';
-			}
-			// If the line is not empty and does not contain a colon, treat it as a section header
-			elseif (!empty($line)){
-				echo '<tr class="body">';
-				echo "<td colspan=\"2\"><b>$line</b></td>";
-				echo '</tr>';
-			}
+
+			list($key, $value) = explode(':', $line, 2);
+			$value = preg_replace('/\s*\([^)]*\)/', '', trim($value)); // Remove inline parentheses content
+
+			echo "<tr><td>{$key}</td><td>{$value}</td></tr>";
 		}
-		echo '</table>';
+
+		echo "</table>";
+
 		if ($matched > 0) {
 			echo "<p>* Lines matching \"$sensor_exclude_list\" excluded</p>";
 		}
