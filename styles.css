@@ -4,6 +4,8 @@ table.main {
 
 table.section {
   border: 0;
+  width: 100%;
+  min-width: 150px; /* Minimum width for the table */
 }
 
 table.section tr.header {
@@ -21,7 +23,7 @@ table.section tr.body {
 
 /* Specific table for sensors */
 table.sensors {
-  width: 90%;
+  width: 100%;
   min-width: 150px; /* Minimum width for the table */
 }
 

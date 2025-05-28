@@ -539,16 +539,18 @@ function output_ups($upsDev) {
  */
 function output_sensors($sensor_exclude_list) {
 	$sensors_cmd = trim(`which sensors`);
-	$matched = 0;
 	$parentheses_pattern = '/\s*\([^)]*\)/'; // Pattern to match inline parentheses content
+
+	$matched = 0;
+	$retval = null;
+	$output = [];
+	$device = '';
 
 	if (empty($sensors_cmd) && !file_exists("$sensors_cmd")) {
 		echo "<p>Error: Unable to execute 'sensors'. Please check permissions or configuration.</p>";
 		return;
 	}
 
-	$retval = null;
-	$output = [];
 	$output = htmlspecialchars(shell_exec(escapeshellcmd("$sensors_cmd")), ENT_QUOTES, 'UTF-8');
 
 	if (empty($output)) {
@@ -556,25 +558,25 @@ function output_sensors($sensor_exclude_list) {
 		return;
 	}
 	else {
-		$lines = explode("\n", $output);
 		echo '<table class="sensors">';
 		echo '<tr class="header">';
 		echo '<td>&nbsp;Sensor&nbsp;</td>';
 		echo '<td>&nbsp;Value&nbsp;</td>';
 		echo '</tr>';
 
-		$device = '';
+		$lines = explode("\n", $output);
 
 		foreach ($lines as $line) {
 			$line = trim($line);
 
-			if (!empty($line) && preg_match("/$sensor_exclude_list/i", $line)) {
+			if (empty($line)) continue; // Skip empty lines
+			if (preg_match("/$sensor_exclude_list/i", $line)) {
 				$matched++;
 				continue; // Exclude matching lines
 			}
 			if (strpos($line, ':') === false) {
 				$device = $line;
-				$device = preg_replace("$parentheses_pattern", '', trim($device)); // Remove inline parentheses content
+				$device = preg_replace($parentheses_pattern, '', trim($device)); // Remove inline parentheses content
 				echo "<tr class=\"body\"><td colspan='2'><strong>{$device}</strong></td></tr>";
 				continue;
 			}
