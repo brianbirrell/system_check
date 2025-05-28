@@ -468,6 +468,10 @@ function output_raid() {
 function output_ups($upsDev) {
 	$upsApp = trim(`which upsc`);
 
+	if (empty($upsDev)) {
+		echo "<p>Error: UPS device identifier is not set. Please check your configuration.</p>";
+		return;
+	}
 	if (empty($upsApp) && !file_exists("$upsApp")) {
 		echo "<p>Error: Unable to execute 'upsc'. Please check permissions or configuration.</p>";
 		return;
@@ -542,7 +546,7 @@ function output_sensors($sensor_exclude_list) {
 	$output = [];
 	$output = htmlspecialchars(shell_exec("$sensors_cmd 2>&1"), ENT_QUOTES, 'UTF-8');
 
-	if ($output === null) {
+	if (empty($output)) {
 		echo "<p>Error: Unable to retrieve sensor data. Please contact the administrator.</p>";
 		return;
 	}
