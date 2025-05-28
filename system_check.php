@@ -71,7 +71,7 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
 		const stylesheet = document.getElementById('theme-stylesheet');
 		const currentTheme = stylesheet.getAttribute('data-theme');
 		const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-		
+
 		stylesheet.setAttribute('href', newTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
 		stylesheet.setAttribute('data-theme', newTheme);
 		localStorage.setItem('theme', newTheme);
@@ -207,7 +207,7 @@ function output_name() {
 		echo "<p>Error: 'uptime' command not found. Please ensure it is installed and accessible.</p>";
 		return;
 	}
-	
+
 	$uptime = trim(`$uptime_cmd`);
 	if (empty($uptime)) {
 		echo "<p>Error: Failed to retrieve uptime information. Please check the command or system configuration.</p>";
@@ -561,7 +561,7 @@ function output_sensors($sensor_exclude_list) {
 		echo '<td>&nbsp;Information&nbsp;</td>';
 		echo '</tr>';
 		foreach ($lines as $line) {
-			if (@preg_match("/$sensor_exclude_list/i", '') !== false && !preg_match("/$sensor_exclude_list/i", $line)) {
+			if (@preg_match("/$sensor_exclude_list/i", '') !== false && preg_match("/$sensor_exclude_list/i", $line)) {
 				$matched++;
 				continue; // Skip lines matching the exclude list
 			}
@@ -576,10 +576,9 @@ function output_sensors($sensor_exclude_list) {
 			// If the line is not empty and does not contain a colon, treat it as a section header
 			elseif (!empty($line)){
 				echo '<tr class="body">';
-				echo '<td colspan="2">$line</td>';
+				echo "<td colspan=\"2\">$line</td>";
 				echo '</tr>';
 			}
-
 		}
 		echo '</table>';
 		if ($matched > 0) {
