@@ -483,10 +483,10 @@ function output_ups($upsDev) {
 		return;
 	}
 
-	if (preg_match('/status: (.*)/', $output, $matches)) {
+	if (preg_match('/ups.status: (.*)/', $output, $matches)) {
 		$status = $matches[1];
 	} else {
-		$status = 'Unknown';
+		$status = 'N/A';
 	}
 
 	# One of "OL," "OB," or "LB," which are online (power OK),
@@ -500,19 +500,21 @@ function output_ups($upsDev) {
 	elseif ($status == 'LB') {
 		$statusText = "Low Battery (backup power low)";
 	}
+	else {
+		$statusText = "N/A";
+	}
 
-	preg_match('/charge: (.*)/', $output, $matches);
-	if (preg_match('/charge: (.*)/', $output, $matches)) {
+	if (preg_match('/battery.charge: (.*)/', $output, $matches)) {
 		$charge = $matches[1] . '%';
 	} else {
 		$charge = 'N/A';
 	}
-	if (preg_match('/load: (.*)/', $output, $matches)) {
+	if (preg_match('/ups.load: (.*)/', $output, $matches)) {
 		$load = $matches[1] . '%';
 	} else {
 		$load = 'N/A';
 	}
-	if (preg_match('/runtime: (.*)/', $output, $matches)) {
+	if (preg_match('/battery.runtime: (.*)/', $output, $matches)) {
 		$runtime = $matches[1] . 'sec';
 	} else {
 		$runtime = 'N/A';
