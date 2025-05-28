@@ -557,7 +557,7 @@ function output_sensors($sensor_exclude_list) {
 		echo '<table class="section">';
 		echo '<tr class="header">';
 		echo '<td>&nbsp;Sensor&nbsp;</td>';
-		echo '<td>&nbsp;Information&nbsp;</td>';
+		echo '<td>&nbsp;Value&nbsp;</td>';
 		echo '</tr>';
 
 		$device = '';
@@ -569,14 +569,14 @@ function output_sensors($sensor_exclude_list) {
 
 			if (strpos($line, ':') === false) {
 				$device = $line;
-				echo "<tr><td colspan='2'><strong>{$device}</strong></td></tr>";
+				echo "<tr class=\"body\"><td colspan='2'><strong>{$device}</strong></td></tr>";
 				continue;
 			}
 
 			list($key, $value) = explode(':', $line, 2);
 			$value = preg_replace('/\s*\([^)]*\)/', '', trim($value)); // Remove inline parentheses content
 
-			echo "<tr><td>{$key}</td><td>{$value}</td></tr>";
+			echo "<tr class=\"body\"><td>{$key}</td><td>{$value}</td></tr>";
 		}
 
 		echo "</table>";
