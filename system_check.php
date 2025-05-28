@@ -91,7 +91,7 @@ function output_df($dev_exclude_list) {
 			echo "<p>* Lines matching \"$dev_exclude_list\" excluded</p>";
 		}
 	} else {
-		echo "$df_cmd not found!\n";
+		echo "<p>Error: Unable to execute '$df_cmd'. Please check permissions or configuration.</p>";
 	}
 }
 
@@ -115,7 +115,7 @@ function output_mem() {
 		}
 		echo '</table>';
 	} else {
-		echo "$free_cmd not found!\n";
+		echo "<p>Error: Unable to execute '$free_cmd'. Please check permissions or configuration.</p>";
 	}
 }
 
@@ -144,8 +144,7 @@ function output_name() {
 		echo '</p></td></tr>';
 		echo '</table>';
 	} else {
-		echo "$uname_cmd, $hostname_cmd, or $uptime_cmd not found!\n";
-	}
+		echo "<p>Error: Unable to execute '$uname_cmd', '$hostname_cmd', or '$uptime_cmd'. Please check permissions or configuration.</p>";	}
 }
 
 function output_service($services) {
@@ -281,7 +280,7 @@ function output_raid() {
 		echo '</table>';
 	}
 	else {
-		echo "$myFile not found!\n";
+		echo "<p>Error: Unable to find $myFile. Please check permissions or configuration.</p>";
 	}
 }
 
@@ -321,7 +320,7 @@ function output_ups($upsDev) {
 		echo "&nbsp;&nbsp;&nbsp;Status=$statusText, Charge=$charge, Runtime=$runtime, Load=$load";
 		echo '</p>';
 	} else {
-		echo "$upsApp not found!\n";
+		echo "<p>Error: Unable to execute $upsApp. Please check permissions or configuration.</p>";
 	}
 }
 
@@ -346,7 +345,6 @@ function output_sensors($sensor_exclude_list) {
 			echo '<td>&nbsp;Sensor&nbsp;</td>';
 			echo '<td>&nbsp;Information&nbsp;</td>';
 			echo '</tr>';
-
 			foreach ($lines as $line) {
 				if (strpos($line, ':') !== false) {
 					list ($sensor, $data) = preg_split('/:/', $line);
