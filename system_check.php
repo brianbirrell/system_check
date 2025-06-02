@@ -44,10 +44,11 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
  * @file system_check.php
  */
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>System Check</title>
   <link id="theme-stylesheet" rel="stylesheet" type="text/css" href="styles.css" data-theme="light">
   <script>
@@ -373,8 +374,8 @@ function output_disk_health() {
 	echo '<table class="section">';
 	echo '<tr class="header">';
 	echo '<td>&nbsp;Drive&nbsp;</td>';
-	echo '<td>&nbsp;Temperature&nbsp;</td>';
-	echo '<td>&nbsp;SMART Status&nbsp;</td>';
+	echo '<td align=center>&nbsp;Temperature&nbsp;</td>';
+	echo '<td align=center>&nbsp;SMART Status&nbsp;</td>';
 	echo '</tr>';
 
 	foreach ($drives as $drive) {
@@ -521,10 +522,12 @@ function output_ups($upsDev) {
 	} else {
 		$runtime = 'N/A';
 	}
-	echo '<p>';
-	echo "$upsDev:<br>";
+
+	echo '<table class="section">';
+	echo '<tr class="body"><td>';
 	echo "&nbsp;&nbsp;&nbsp;Status=$statusText, Charge=$charge, Runtime=$runtime, Load=$load";
-	echo '</p>';
+	echo '</td></tr>';
+	echo '</table>';
 }
 
 /**
