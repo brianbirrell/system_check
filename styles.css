@@ -11,14 +11,14 @@ table.section {
 table.section tr.header {
   font-family: Verdana;
   color: black;
-  font-size: 120%;
+  font-size: 14px;
   background-color: #C0C0C0;
 }
 
 table.section tr.body {
   font-family: Verdana;
   color: black;
-  font-size: 80%;
+  font-size: 12px;
 }
 
 /* Specific table for sensors */
@@ -30,7 +30,7 @@ table.sensors {
 table.sensors tr.header {
   font-family: Verdana;
   color: black;
-  font-size: 120%;
+  font-size: 14px;
   background-color: #C0C0C0;
 }
 
@@ -45,25 +45,25 @@ table.sensors td:nth-child(2) {
 h1 {
   font-family: Verdana;
   color: black;
-  font-size: 200%;
+  font-size: 24px;
 }
 
 h2 {
   font-family: Verdana;
   color: black;
-  font-size: 150%;
+  font-size: 18px;
 }
 
 p {
   font-family: Verdana;
   color: black;
-  font-size: 80%;
+  font-size: 12px;
 }
 
 body {
   font-family: Verdana;
   color: black;
-  font-size: 80%;
+  font-size: 12px;
 }
 
 div.float-left {
