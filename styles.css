@@ -66,9 +66,11 @@ body {
   font-size: 12px;
 }
 
-div.float-left {
-  float: left;
-  padding: 5px;
+.table-container {
+    display: inline-flex;
+    justify-content: space-between; /* Ensures they stay in one row */
+    gap: 5px; /* Adjust spacing between tables */
+    width: 100%;
 }
 
 .refresh-button {

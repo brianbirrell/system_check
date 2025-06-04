@@ -80,12 +80,11 @@ p {
   font-size: 12px;
 }
 
-/* Floating div styling */
-div.float-left {
-  float: left;
-  padding: 5px;
-  background-color: #1e1e1e; /* Dark background for floating divs */
-  border: 1px solid #444; /* Border for better visibility */
+.table-container {
+    display: inline-flex;
+    justify-content: space-between; /* Ensures they stay in one row */
+    gap: 5px; /* Adjust spacing between tables */
+    width: 100%;
 }
 
 .refresh-button {

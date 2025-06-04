@@ -259,6 +259,8 @@ function output_name() {
 function output_service($services) {
 	$count = 0;
 
+	echo '<div class="table-container">';
+
 	output_service_header();
 	foreach ($services as $name => $location) {
 		if (!($count & 1)) {
@@ -302,6 +304,8 @@ function output_service($services) {
 		$count++;
 	}
 	output_service_footer();
+
+	echo '</div>'; // Close the table-container div
 }
 
 /**
@@ -313,7 +317,7 @@ function output_service($services) {
  * @return void
  */
 function output_service_header() {
-	echo '<div class="float-left"><table class="section">';
+	echo '<table class="section">';
 	echo '<tr class="header">';
 	echo '<td>&nbsp;Status&nbsp;</td>';
 	echo '<td>&nbsp;Service&nbsp;</td>';
@@ -329,7 +333,7 @@ function output_service_header() {
  * @return void
  */
 function output_service_footer() {
-	echo '</table></div>';
+	echo '</table>';
 }
 
 /**
