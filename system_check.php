@@ -529,7 +529,7 @@ function output_ups($upsDev) {
 
 	echo '<table class="section">';
 	echo '<tr class="body"><td>';
-	echo "&nbsp;&nbsp;&nbsp;Status=$statusText, Charge=$charge, Runtime=$runtime, Load=$load";
+	echo "&nbsp;Status=$statusText, Charge=$charge, Runtime=$runtime, Load=$load";
 	echo '</td></tr>';
 	echo '</table>';
 }
