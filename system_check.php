@@ -385,14 +385,15 @@ function output_disk_health() {
 	foreach ($drives as $drive) {
 		$sanitizedDrive = escapeshellarg($drive);
 		exec("sudo $smartApp -H -A $sanitizedDrive 2>&1", $smartOutput, $retval);
-		// Default values
-		$health = 'N/A';
-		$temp = 'N/A';
 
 		// Parse SMART health
 		foreach ($smartOutput as $line) {
+			// Default values
+			$health = 'N/A';
+			$temp = 'N/A';
+
 			if (preg_match('/SMART overall-health.*?:\s*(\w+)/', $line, $m)) {
-				$health = strtoupper($m[1]);
+				$health = (strtoupper($m[1]) === 'PASSED') ? 'PASSED' : 'FAILED';
 			}
 			// Try to find temperature (ATA or NVMe)
 			if (preg_match('/Temperature_Celsius.*\s(\d+)\s\(.*\)$/', $line, $m)) {
