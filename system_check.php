@@ -389,21 +389,28 @@ function output_disk_health() {
 		$health = 'N/A';
 		$temp = 'N/A';
 
-		// Parse SMART health
-		foreach ($smartOutput as $line) {
-			if (preg_match('/SMART overall-health.*?:\s*(\w+)/', $line, $m)) {
-				$health = (strtoupper($m[1]) === 'PASSED') ? 'PASSED' : 'FAILED';
+		// Only parse SMART output if command was successful
+		if ($retval === 0) {
+			// Parse SMART health
+			foreach ($smartOutput as $line) {
+				if (preg_match('/SMART overall-health.*?:\s*(\w+)/', $line, $m)) {
+					$health = (strtoupper($m[1]) === 'PASSED') ? 'PASSED' : 'FAILED';
+				}
+				// Try to find temperature (ATA or NVMe)
+				if (preg_match('/Temperature_Celsius.*\s(\d+)\s\(.*\)$/', $line, $m)) {
+					$temp = $m[1] . ' &deg;C';
+				}
+				if (preg_match('/Temperature:\s*(\d+)\s*C/', $line, $m)) {
+					$temp = $m[1] . ' &deg;C';
+				}
+				if (preg_match('/Current Temperature:\s*(\d+)\s*C/', $line, $m)) {
+					$temp = $m[1] . ' &deg;C';
+				}
 			}
-			// Try to find temperature (ATA or NVMe)
-			if (preg_match('/Temperature_Celsius.*\s(\d+)\s\(.*\)$/', $line, $m)) {
-				$temp = $m[1] . ' &deg;C';
-			}
-			if (preg_match('/Temperature:\s*(\d+)\s*C/', $line, $m)) {
-				$temp = $m[1] . ' &deg;C';
-			}
-			if (preg_match('/Current Temperature:\s*(\d+)\s*C/', $line, $m)) {
-				$temp = $m[1] . ' &deg;C';
-			}
+		} else {
+			// If smartctl command failed, set health and temp to N/A
+			$health = 'FAILED';
+			$temp = 'N/A';
 		}
 
 		echo '<tr class="body">';
