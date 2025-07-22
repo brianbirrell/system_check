@@ -385,13 +385,12 @@ function output_disk_health() {
 	foreach ($drives as $drive) {
 		$sanitizedDrive = escapeshellarg($drive);
 		exec("sudo $smartApp -H -A $sanitizedDrive 2>&1", $smartOutput, $retval);
+		// Default values
+		$health = 'N/A';
+		$temp = 'N/A';
 
 		// Parse SMART health
 		foreach ($smartOutput as $line) {
-			// Default values
-			$health = 'N/A';
-			$temp = 'N/A';
-
 			if (preg_match('/SMART overall-health.*?:\s*(\w+)/', $line, $m)) {
 				$health = (strtoupper($m[1]) === 'PASSED') ? 'PASSED' : 'FAILED';
 			}
