@@ -1,5 +1,5 @@
 /* General body styling for dark theme */
-body {
+html.dark-mode body {
   font-family: Verdana;
   color: #f0f0f0; /* Light text color */
   background-color: #121212; /* Dark background color */

@@ -66,6 +66,11 @@ body {
   font-size: 12px;
 }
 
+html.dark-mode body {
+  color: #f0f0f0;
+  background-color: #121212;
+}
+
 .table-container {
     display: inline-flex;
     justify-content: space-between; /* Ensures they stay in one row */
