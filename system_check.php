@@ -47,10 +47,11 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
 <!DOCTYPE html>
 <html lang="en">
 <head>
-		<meta content="text/html; charset=utf-8" http-equiv="content-type">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>System Check</title>
-		<link rel="stylesheet" type="text/css" href="styles.css">
+			<meta content="text/html; charset=utf-8" http-equiv="content-type">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<title>System Check</title>
+			<link rel="preload" as="style" href="styles.css">
+			<link rel="stylesheet" type="text/css" href="styles.css">
 		<script>
 			// Refresh the page when switching back to this tab
 			document.addEventListener('visibilitychange', () => {
