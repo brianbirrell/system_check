@@ -47,66 +47,22 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<script>
-		// Set dark mode class before CSS loads to prevent white flash
-		(function() {
-			try {
-				var theme = localStorage.getItem('theme');
-				var systemPref = window.matchMedia('(prefers-color-scheme: dark)').matches;
-				if (theme === 'dark' || (theme === null && systemPref)) {
-					document.documentElement.classList.add('dark-mode');
+		<meta content="text/html; charset=utf-8" http-equiv="content-type">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>System Check</title>
+		<link rel="stylesheet" type="text/css" href="styles.css">
+		<script>
+			// Refresh the page when switching back to this tab
+			document.addEventListener('visibilitychange', () => {
+				if (document.visibilityState === 'visible') {
+					location.reload();
 				}
-			} catch (e) {}
-		})();
-	</script>
-	<meta content="text/html; charset=utf-8" http-equiv="content-type">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>System Check</title>
-	<link id="theme-stylesheet" rel="stylesheet" type="text/css" href="styles.css" data-theme="light">
-	<script>
-		// Load the saved theme on page load
-		document.addEventListener('DOMContentLoaded', () => {
-			const savedTheme = localStorage.getItem('theme') || 'light';
-			const stylesheet = document.getElementById('theme-stylesheet');
-			stylesheet.setAttribute('href', savedTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
-			stylesheet.setAttribute('data-theme', savedTheme);
-			// Toggle dark-mode class on html
-			if (savedTheme === 'dark') {
-				document.documentElement.classList.add('dark-mode');
-			} else {
-				document.documentElement.classList.remove('dark-mode');
+			});
+			// Function to refresh data
+			function refreshData() {
+				location.reload();
 			}
-		});
-
-		// Refresh the page when switching back to this tab
-		document.addEventListener('visibilitychange', () => {
-			if (document.visibilityState === 'visible') {
-				refreshData();
-			}
-		});
-
-		// Toggle theme and save preference
-		function toggleTheme() {
-			const stylesheet = document.getElementById('theme-stylesheet');
-			const currentTheme = stylesheet.getAttribute('data-theme');
-			const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-			stylesheet.setAttribute('href', newTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
-			stylesheet.setAttribute('data-theme', newTheme);
-			localStorage.setItem('theme', newTheme);
-			// Toggle dark-mode class on html
-			if (newTheme === 'dark') {
-				document.documentElement.classList.add('dark-mode');
-			} else {
-				document.documentElement.classList.remove('dark-mode');
-			}
-		}
-
-		// Function to refresh data
-		function refreshData() {
-			location.reload();
-		}
-	</script>
+		</script>
 </head>
 <body>
 

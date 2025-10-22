@@ -66,9 +66,28 @@ body {
   font-size: 12px;
 }
 
-html.dark-mode body {
-  color: #f0f0f0;
-  background-color: #121212;
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #f0f0f0;
+    background-color: #121212;
+  }
+  table.main,
+  table.section,
+  table.sensors {
+    background-color: #1e1e1e;
+    border-color: #444;
+  }
+  table.section tr.header,
+  table.sensors tr.header {
+    color: #ffffff;
+    background-color: #333333;
+  }
+  table.section tr.body,
+  table.sensors tr.body {
+    color: #f0f0f0;
+    background-color: #1e1e1e;
+  }
 }
 
 .table-container {
