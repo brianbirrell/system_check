@@ -384,7 +384,7 @@ function output_service_footer() {
  */
 function output_disk_health() {
 	$lsblkApp = trim(`which lsblk`);
-	$lsblkOpts = "-dpn -I 8,259 -o NAME";
+	$lsblkOpts = "-J -b -dpn -I 8,259 -o NAME,TYPE,SIZE,SERIAL";
 	$smartApp = trim(`which smartctl`);
 
 	if (empty($lsblkApp) && !file_exists($lsblkApp)) {
@@ -397,7 +397,31 @@ function output_disk_health() {
 	}
 
 	$lsblkOutput = shell_exec(escapeshellcmd("$lsblkApp $lsblkOpts"));
-	$drives = array_filter(array_map('trim', explode("\n", $lsblkOutput)));
+	$lsblkData = json_decode($lsblkOutput, true);
+	$drives = [];
+
+	if (!is_array($lsblkData) || !isset($lsblkData['blockdevices']) || !is_array($lsblkData['blockdevices'])) {
+		echo "<p>Error: Unable to parse drive information from 'lsblk'.</p>";
+		return;
+	}
+
+	foreach ($lsblkData['blockdevices'] as $device) {
+		if (!is_array($device)) {
+			continue;
+		}
+
+		$deviceType = isset($device['type']) ? strtolower(trim((string) $device['type'])) : '';
+		$deviceSize = isset($device['size']) ? (int) $device['size'] : 0;
+
+		// Skip non-disk entries and virtual zero-byte drives.
+		if ($deviceType !== 'disk' || $deviceSize <= 0) {
+			continue;
+		}
+
+		if (!empty($device['name'])) {
+			$drives[] = (string) $device['name'];
+		}
+	}
 
 	echo '<table class="section">';
 	echo '<tr class="header">';
@@ -408,6 +432,15 @@ function output_disk_health() {
 
 	foreach ($drives as $drive) {
 		$sanitizedDrive = escapeshellarg($drive);
+		$probeOutput = [];
+		$probeRetval = null;
+		exec("sudo $smartApp -i $sanitizedDrive 2>&1", $probeOutput, $probeRetval);
+
+		// Skip virtual or unsupported devices that do not respond to SMART queries.
+		if ($probeRetval !== 0) {
+			continue;
+		}
+
 		exec("sudo $smartApp -H -A $sanitizedDrive 2>&1", $smartOutput, $retval);
 		// Default values
 		$health = 'N/A';
@@ -432,9 +465,8 @@ function output_disk_health() {
 				}
 			}
 		} else {
-			// If smartctl command failed, set health and temp to N/A
-			$health = 'FAILED';
-			$temp = 'N/A';
+			// Skip entries that fail full SMART query after passing the initial probe.
+			continue;
 		}
 
 		echo '<tr class="body">';
