@@ -14,6 +14,9 @@ table.main {
   border: 1px solid var(--table-header-bg);
   border-collapse: collapse;
   background-color: var(--page-bg);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 table.main > thead > tr > td,
@@ -90,6 +93,7 @@ body {
   color: var(--text-primary);
   background-color: var(--page-bg);
   font-size: 12px;
+  margin: 0;
 }
 
 html,
@@ -101,6 +105,8 @@ body {
   min-height: 100vh;
   color: var(--text-primary);
   background-color: var(--page-bg);
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 body.theme-dark .page-wrap {
@@ -293,6 +299,35 @@ body.theme-dark .theme-toggle-moon {
 .theme-toggle-form {
   margin: 0;
   display: inline-flex;
+}
+
+@media (max-width: 640px) {
+  .page-wrap {
+    padding: 8px;
+  }
+
+  table.main > thead > tr > td > div {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  table.section,
+  table.sensors {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table.section td,
+  table.sensors td {
+    white-space: nowrap;
+  }
 }
 
 .status-symbol {
