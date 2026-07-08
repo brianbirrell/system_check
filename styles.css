@@ -290,6 +290,11 @@ body.theme-dark .theme-toggle-moon {
   vertical-align: middle;
 }
 
+.theme-toggle-form {
+  margin: 0;
+  display: inline-flex;
+}
+
 .status-symbol {
   font-size: 13pt;
   color: white;

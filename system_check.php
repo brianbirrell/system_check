@@ -23,14 +23,15 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
 $validThemes = ['light', 'dark'];
 $theme = '';
 
-if (isset($_GET['theme']) && in_array($_GET['theme'], $validThemes, true)) {
-	$theme = $_GET['theme'];
+if (isset($_POST['theme']) && in_array($_POST['theme'], $validThemes, true)) {
+	$theme = $_POST['theme'];
 	setcookie('theme', $theme, [
 		'expires' => time() + (365 * 24 * 60 * 60),
 		'path' => '/',
 		'samesite' => 'Lax',
 	]);
-	$_COOKIE['theme'] = $theme;
+	header('Location: ' . $_SERVER['PHP_SELF']);
+	exit;
 } elseif (isset($_COOKIE['theme']) && in_array($_COOKIE['theme'], $validThemes, true)) {
 	$theme = $_COOKIE['theme'];
 }
@@ -654,11 +655,14 @@ function output_sensors($sensor_exclude_list) {
 	<div style="display: flex; align-items: center; justify-content: space-between;">
 		<h1>System Check</h1>
 		<div class="btn-container">
-			<a href="?theme=<?= htmlspecialchars($nextTheme, ENT_QUOTES, 'UTF-8'); ?>" class="theme-toggle-button" aria-label="<?= htmlspecialchars($toggleTitle, ENT_QUOTES, 'UTF-8'); ?>" title="<?= htmlspecialchars($toggleTitle, ENT_QUOTES, 'UTF-8'); ?>">
-				<span class="theme-toggle-sun" aria-hidden="true">☀</span>
-				<span class="theme-toggle-moon" aria-hidden="true">🌙</span>
-				<span class="theme-toggle-thumb" aria-hidden="true"></span>
-			</a>
+			<form method="post" class="theme-toggle-form">
+				<input type="hidden" name="theme" value="<?= htmlspecialchars($nextTheme, ENT_QUOTES, 'UTF-8'); ?>">
+				<button type="submit" class="theme-toggle-button" aria-label="<?= htmlspecialchars($toggleTitle, ENT_QUOTES, 'UTF-8'); ?>" title="<?= htmlspecialchars($toggleTitle, ENT_QUOTES, 'UTF-8'); ?>">
+					<span class="theme-toggle-sun" aria-hidden="true">☀</span>
+					<span class="theme-toggle-moon" aria-hidden="true">🌙</span>
+					<span class="theme-toggle-thumb" aria-hidden="true"></span>
+				</button>
+			</form>
 			&nbsp;
 			<a href="" class="refresh-button" title="Refresh Data" aria-label="Refresh Data">&#x21bb;</a>
 		</div>
