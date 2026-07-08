@@ -19,6 +19,25 @@ $services = $config['services'];
 $upsDev = $config['upsDev'];
 $dev_exclude_list = $config['dev_exclude_list'];
 $sensor_exclude_list = $config['sensor_exclude_list'];
+
+$validThemes = ['light', 'dark'];
+$theme = '';
+
+if (isset($_GET['theme']) && in_array($_GET['theme'], $validThemes, true)) {
+	$theme = $_GET['theme'];
+	setcookie('theme', $theme, [
+		'expires' => time() + (365 * 24 * 60 * 60),
+		'path' => '/',
+		'samesite' => 'Lax',
+	]);
+	$_COOKIE['theme'] = $theme;
+} elseif (isset($_COOKIE['theme']) && in_array($_COOKIE['theme'], $validThemes, true)) {
+	$theme = $_COOKIE['theme'];
+}
+
+$bodyThemeClass = $theme === 'dark' ? 'theme-dark' : ($theme === 'light' ? 'theme-light' : '');
+$nextTheme = $theme === 'dark' ? 'light' : 'dark';
+$toggleTitle = $nextTheme === 'dark' ? 'Enable dark mode' : 'Enable light mode';
 ?>
 
 <?php
@@ -26,20 +45,14 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
  * System Check Page
  *
  * This file renders the main HTML structure for the System Check application.
- * 
- * Features:
- * - Loads and applies the user's preferred theme (light or dark) from localStorage.
- * - Provides a toggleTheme() function to switch between light and dark themes, updating both the stylesheet and localStorage.
- * - Automatically refreshes the page data when the browser tab becomes visible again.
- * - Includes a refreshData() function to reload the page.
  *
- * JavaScript:
- * - On DOMContentLoaded, applies the saved theme.
- * - Listens for visibility changes to refresh data when the tab is reactivated.
- * - Handles theme toggling and persistence.
+ * Features:
+ * - Uses a no-JavaScript dark mode toggle with server-side persistence via cookie.
+ * - Falls back to the user's system color scheme when no theme preference exists.
+ * - Provides a refresh link to reload current data.
  *
  * Stylesheets:
- * - Uses 'styles.css' for light theme and 'styles-dark.css' for dark theme.
+ * - Uses 'styles.css' with CSS custom properties for both themes.
  *
  * @file system_check.php
  */
@@ -47,68 +60,13 @@ $sensor_exclude_list = $config['sensor_exclude_list'];
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<script>
-		// Set dark mode class before CSS loads to prevent white flash
-		(function() {
-			try {
-				var theme = localStorage.getItem('theme');
-				var systemPref = window.matchMedia('(prefers-color-scheme: dark)').matches;
-				if (theme === 'dark' || (theme === null && systemPref)) {
-					document.documentElement.classList.add('dark-mode');
-				}
-			} catch (e) {}
-		})();
-	</script>
 	<meta content="text/html; charset=utf-8" http-equiv="content-type">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>System Check</title>
-	<link id="theme-stylesheet" rel="stylesheet" type="text/css" href="styles.css" data-theme="light">
-	<script>
-		// Load the saved theme on page load
-		document.addEventListener('DOMContentLoaded', () => {
-			const savedTheme = localStorage.getItem('theme') || 'light';
-			const stylesheet = document.getElementById('theme-stylesheet');
-			stylesheet.setAttribute('href', savedTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
-			stylesheet.setAttribute('data-theme', savedTheme);
-			// Toggle dark-mode class on html
-			if (savedTheme === 'dark') {
-				document.documentElement.classList.add('dark-mode');
-			} else {
-				document.documentElement.classList.remove('dark-mode');
-			}
-		});
-
-		// Refresh the page when switching back to this tab
-		document.addEventListener('visibilitychange', () => {
-			if (document.visibilityState === 'visible') {
-				refreshData();
-			}
-		});
-
-		// Toggle theme and save preference
-		function toggleTheme() {
-			const stylesheet = document.getElementById('theme-stylesheet');
-			const currentTheme = stylesheet.getAttribute('data-theme');
-			const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-			stylesheet.setAttribute('href', newTheme === 'dark' ? 'styles-dark.css' : 'styles.css');
-			stylesheet.setAttribute('data-theme', newTheme);
-			localStorage.setItem('theme', newTheme);
-			// Toggle dark-mode class on html
-			if (newTheme === 'dark') {
-				document.documentElement.classList.add('dark-mode');
-			} else {
-				document.documentElement.classList.remove('dark-mode');
-			}
-		}
-
-		// Function to refresh data
-		function refreshData() {
-			location.reload();
-		}
-	</script>
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<body>
+<body class="<?= htmlspecialchars($bodyThemeClass, ENT_QUOTES, 'UTF-8'); ?>">
+	<div class="page-wrap">
 
 <?php
 /**
@@ -147,6 +105,7 @@ function output_df($dev_exclude_list) {
 			if (!preg_match("/$dev_exclude_list/i", $lines[$i])) {
 				echo '<tr class="body">';
 				for ($j = 0; $j < 6; $j++) {
+					$align = "left";
 					if ($j == 0 || $j == 5)
 						$align = "left";
 					else if ($j == 1 || $j == 2 || $j == 3)
@@ -695,9 +654,13 @@ function output_sensors($sensor_exclude_list) {
 	<div style="display: flex; align-items: center; justify-content: space-between;">
 		<h1>System Check</h1>
 		<div class="btn-container">
-			<button onclick="toggleTheme()" class="theme-toggle-button">Toggle Theme</button>
+			<a href="?theme=<?= htmlspecialchars($nextTheme, ENT_QUOTES, 'UTF-8'); ?>" class="theme-toggle-button" aria-label="<?= htmlspecialchars($toggleTitle, ENT_QUOTES, 'UTF-8'); ?>" title="<?= htmlspecialchars($toggleTitle, ENT_QUOTES, 'UTF-8'); ?>">
+				<span class="theme-toggle-sun" aria-hidden="true">☀</span>
+				<span class="theme-toggle-moon" aria-hidden="true">🌙</span>
+				<span class="theme-toggle-thumb" aria-hidden="true"></span>
+			</a>
 			&nbsp;
-			<button onclick="refreshData()" class="refresh-button" title="Refresh Data">&#x21bb;</button>
+			<a href="" class="refresh-button" title="Refresh Data" aria-label="Refresh Data">&#x21bb;</a>
 		</div>
 	</div>
 </td></tr>
@@ -730,6 +693,7 @@ function output_sensors($sensor_exclude_list) {
 </td></tr>
 </tbody>
 </table>
+	</div>
 
 </body>
 </html>
