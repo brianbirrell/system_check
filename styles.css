@@ -11,7 +11,14 @@
 }
 
 table.main {
-  border: 1;
+  border: 1px solid var(--table-header-bg);
+  border-collapse: collapse;
+  background-color: var(--page-bg);
+}
+
+table.main > thead > tr > td,
+table.main > tbody > tr > td {
+  background-color: var(--page-bg);
 }
 
 table.section {
@@ -81,8 +88,13 @@ p {
 body {
   font-family: Verdana;
   color: var(--text-primary);
-  background-color: #ffffff;
+  background-color: var(--page-bg);
   font-size: 12px;
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 .page-wrap {
@@ -103,6 +115,10 @@ body.theme-dark .page-wrap {
   --button-text: #ffffff;
 }
 
+body.theme-dark {
+  background-color: #121212;
+}
+
 body.theme-light .page-wrap {
   --page-bg: #ffffff;
   --text-primary: #000000;
@@ -113,6 +129,10 @@ body.theme-light .page-wrap {
   --button-bg: #007bff;
   --button-bg-hover: #0056b3;
   --button-text: #ffffff;
+}
+
+body.theme-light {
+  background-color: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -126,6 +146,10 @@ body.theme-light .page-wrap {
     --button-bg: #2563eb;
     --button-bg-hover: #1d4ed8;
     --button-text: #ffffff;
+  }
+
+  body:not(.theme-light) {
+    background-color: #121212;
   }
 }
 

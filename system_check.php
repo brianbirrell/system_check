@@ -648,7 +648,7 @@ function output_sensors($sensor_exclude_list) {
  * @param array $dev_exclude_list    List of filesystems to exclude from display.
  */
 ?>
-<table border=1 align=center cellpadding=2 cellspacing=0>
+<table class="main" align=center cellpadding=2 cellspacing=0>
 <thead>
 <tr><td style="vertical-align: top;">
 	<div style="display: flex; align-items: center; justify-content: space-between;">
