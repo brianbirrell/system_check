@@ -213,7 +213,7 @@ function output_name() {
 
 	// Output the system information in a table
 	echo '<table class="section">';
-	echo '<tr><td><p>';
+	echo '<tr class="body"><td><p>';
 	echo '<b>Name:</b>&nbsp;';
 	echo "$name<br>";
 	echo '<b>Time:</b>&nbsp;';
