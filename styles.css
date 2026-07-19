@@ -14,7 +14,8 @@ table.main {
   border: 1px solid var(--table-header-bg);
   border-collapse: collapse;
   background-color: var(--page-bg);
-  width: 100%;
+  display: block;
+  width: fit-content;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -160,10 +161,31 @@ body.theme-light {
 }
 
 .table-container {
-    display: inline-flex;
-    justify-content: space-between; /* Ensures they stay in one row */
-    gap: 5px; /* Adjust spacing between tables */
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  align-items: start;
+}
+
+.table-container > table.section {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.table-container > table.section tr.header > td:first-child,
+.table-container > table.section tr.body > td:first-child {
+  width: 56px;
+  min-width: 56px;
+  max-width: 56px;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .table-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .refresh-button {
@@ -313,8 +335,17 @@ body.theme-dark .theme-toggle-moon {
 
   .table-container {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-container > table.section {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
   }
 
   table.section,

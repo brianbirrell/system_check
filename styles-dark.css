@@ -10,6 +10,10 @@ html.dark-mode body {
 table.main {
   border: 1px solid #444;
   background-color: #1e1e1e; /* Darker table background */
+  display: block;
+  width: fit-content;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 table.section {
@@ -81,10 +85,41 @@ p {
 }
 
 .table-container {
-    display: inline-flex;
-    justify-content: space-between; /* Ensures they stay in one row */
-    gap: 5px; /* Adjust spacing between tables */
-    width: 100%;
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.table-container > table.section {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}
+
+.table-container > table.section tr.header > td:first-child,
+.table-container > table.section tr.body > td:first-child {
+  width: 56px;
+  min-width: 56px;
+  max-width: 56px;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .table-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-container > table.section {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+  }
 }
 
 .refresh-button {
