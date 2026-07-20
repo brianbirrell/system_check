@@ -334,23 +334,23 @@ body.theme-dark .theme-toggle-moon {
   }
 
   .table-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .table-container > table.section {
-    flex: 1 1 0;
+    width: 100%;
     min-width: 0;
-    width: auto;
+    max-width: 100%;
   }
 
   table.section,
   table.sensors {
     display: block;
+    width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
