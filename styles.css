@@ -174,12 +174,34 @@ body.theme-light {
   max-width: 100%;
 }
 
+.table-container.services-wide {
+  display: block;
+  width: 100%;
+}
+
+.table-container.services-wide > table.section {
+  width: 100%;
+  display: table;
+}
+
 .table-container > table.section tr.header > td:first-child,
 .table-container > table.section tr.body > td:first-child {
   width: 56px;
   min-width: 56px;
   max-width: 56px;
   text-align: center;
+}
+
+.table-container > table.section tr.header > td:nth-child(2),
+.table-container > table.section tr.body > td:nth-child(2) {
+  width: 50%;
+  min-width: 120px;
+}
+
+.table-container > table.section tr.header > td:nth-child(3),
+.table-container > table.section tr.body > td:nth-child(3) {
+  width: 50%;
+  min-width: 140px;
 }
 
 @media (max-width: 640px) {
