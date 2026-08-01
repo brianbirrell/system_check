@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/sensor_parser.php';
+
 /**
  * Loads the configuration settings from the 'config.php' file.
  *
@@ -569,60 +571,20 @@ function output_ups($upsDev) {
  */
 function output_sensors($sensor_exclude_list) {
 	$sensors_cmd = trim(`which sensors`);
-	$parentheses_pattern = '/\s*\([^)]*\)/'; // Pattern to match inline parentheses content
-
-	$matched = 0;
-	$retval = null;
-	$output = [];
-	$device = '';
 
 	if (empty($sensors_cmd) && !file_exists("$sensors_cmd")) {
 		echo "<p>Error: Unable to execute 'sensors'. Please check permissions or configuration.</p>";
 		return;
 	}
 
-	$output = htmlspecialchars(shell_exec(escapeshellcmd("$sensors_cmd")), ENT_QUOTES, 'UTF-8');
+	$output = shell_exec(escapeshellcmd("$sensors_cmd"));
 
 	if (empty($output)) {
 		echo "<p>Error: Unable to retrieve sensor data. Please contact the administrator.</p>";
 		return;
 	}
-	else {
-		echo '<table class="sensors">';
-		echo '<tr class="header">';
-		echo '<td>&nbsp;Sensor&nbsp;</td>';
-		echo '<td>&nbsp;Value&nbsp;</td>';
-		echo '</tr>';
 
-		$lines = explode("\n", $output);
-
-		foreach ($lines as $line) {
-			$line = trim($line);
-
-			if (empty($line)) continue; // Skip empty lines
-			if (preg_match("/$sensor_exclude_list/i", $line)) {
-				$matched++;
-				continue; // Exclude matching lines
-			}
-			if (strpos($line, ':') === false) {
-				$device = $line;
-				$device = preg_replace($parentheses_pattern, '', trim($device)); // Remove inline parentheses content
-				echo "<tr class=\"body\"><td colspan='2'><strong>{$device}</strong></td></tr>";
-				continue;
-			}
-
-			list($key, $value) = explode(':', $line, 2);
-			$value = preg_replace("$parentheses_pattern", '', trim($value)); // Remove inline parentheses content
-
-			echo "<tr class=\"body\"><td>&ensp;&ensp;{$key}:&nbsp;</td><td>&nbsp;&nbsp;{$value}</td></tr>";
-		}
-
-		echo "</table>";
-
-		if ($matched > 0) {
-			echo "<p>* Lines matching \"$sensor_exclude_list\" excluded</p>";
-		}
-	}
+	echo render_sensors_output($output, $sensor_exclude_list);
 }
 ?>
 
