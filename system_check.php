@@ -8,6 +8,7 @@ require_once __DIR__ . '/sections/ups.php';
 require_once __DIR__ . '/sections/filesystem.php';
 require_once __DIR__ . '/sections/disk_health.php';
 require_once __DIR__ . '/sections/raid.php';
+require_once __DIR__ . '/sections/zfs.php';
 
 /**
  * Loads the configuration settings from the 'config.php' file.
@@ -108,6 +109,10 @@ $toggleTitle = $nextTheme === 'dark' ? 'Enable dark mode' : 'Enable light mode';
                 <tr><td>
                     <h2>Disk Health:</h2>
                     <?php render_disk_health_section(); ?>
+                </td></tr>
+                <tr><td>
+                    <h2>ZFS Pools:</h2>
+                    <?php render_zfs_section(); ?>
                 </td></tr>
                 <tr><td>
                     <h2>RAID Info:</h2>

@@ -7,6 +7,7 @@ $tests = [
     'ups_section_test.php',
     'filesystem_section_test.php',
     'disk_health_section_test.php',
+    'zfs_section_test.php',
     'raid_section_test.php',
 ];
 
